@@ -38,7 +38,8 @@ export function useTransactions(maxItems = 200) {
     return unsub
   }, [user, maxItems])
 
-  /** Atomically writes the transaction and updates the account balance */
+  /** Atomically writes the transaction and updates the account balance.
+   *  Returns the minimal tx object needed for undo: { id, type, accountId, amount } */
   async function createTransaction({ type, accountId, amount, description, date }) {
     const newTxRef  = doc(txsRef(user.uid))
     const accRef    = accountDocRef(user.uid, accountId)
@@ -58,6 +59,8 @@ export function useTransactions(maxItems = 200) {
         createdAt: serverTimestamp(),
       })
     })
+
+    return { id: newTxRef.id, type, accountId, amount }
   }
 
   /** Atomically reverses the balance change and removes the transaction */
