@@ -1,33 +1,54 @@
 import { useState, useEffect } from 'react'
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  serverTimestamp,
+  query,
+  orderBy,
+  limit,
+} from 'firebase/firestore'
+import { db } from '@/services/firebase'
+import { useAuth } from '@/contexts/AuthContext'
 
-const STORAGE_KEY = 'graninha:transactions'
+function transactionsRef(uid) {
+  return collection(db, 'users', uid, 'transactions')
+}
 
-export function useTransactions() {
-  const [transactions, setTransactions] = useState(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      return raw ? JSON.parse(raw) : []
-    } catch {
-      return []
-    }
-  })
+export function useTransactions(maxItems = 50) {
+  const { user } = useAuth()
+  const [transactions, setTransactions] = useState([])
+  const [loading, setLoading]           = useState(true)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions))
-  }, [transactions])
+    if (!user) return
 
-  function addTransaction(tx) {
-    const newTx = {
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
+    const q = query(
+      transactionsRef(user.uid),
+      orderBy('createdAt', 'desc'),
+      limit(maxItems),
+    )
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setTransactions(
+        snapshot.docs.map(d => ({ id: d.id, ...d.data() }))
+      )
+      setLoading(false)
+    })
+
+    return unsubscribe
+  }, [user, maxItems])
+
+  async function addTransaction(tx) {
+    const docRef = await addDoc(transactionsRef(user.uid), {
       ...tx,
-    }
-    setTransactions(prev => [newTx, ...prev])
-    return newTx
+      createdAt: serverTimestamp(),
+    })
+    return { id: docRef.id, ...tx }
   }
 
   const totalIncome  = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0)
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
 
-  return { transactions, addTransaction, totalIncome, totalExpense }
+  return { transactions, loading, addTransaction, totalIncome, totalExpense }
 }
