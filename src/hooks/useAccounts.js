@@ -53,11 +53,15 @@ export function useAccounts() {
     })
   }
 
+  async function updateAccount(id, { name, type, color }) {
+    await updateDoc(doc(db, 'users', user.uid, 'accounts', id), { name, type, color })
+  }
+
   async function removeAccount(id) {
     await deleteDoc(doc(db, 'users', user.uid, 'accounts', id))
   }
 
   const totalBalance = accounts.reduce((sum, acc) => sum + (acc.balance ?? 0), 0)
 
-  return { accounts, loading, addAccount, updateBalance, removeAccount, totalBalance }
+  return { accounts, loading, addAccount, updateAccount, updateBalance, removeAccount, totalBalance }
 }
