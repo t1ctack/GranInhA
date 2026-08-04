@@ -24,6 +24,14 @@
   }
 }
 
+@layer base {
+  /* Make the datetime-local calendar icon visible on dark backgrounds */
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+    cursor: pointer;
+  }
+}
+
 @layer components {
   .card {
     @apply bg-slate-900 rounded-2xl border border-slate-800 p-4;
