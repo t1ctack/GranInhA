@@ -1,0 +1,31 @@
+import { NavLink } from 'react-router-dom'
+import { PiggyBank, LayoutDashboard, ArrowLeftRight, MessageSquare } from 'lucide-react'
+
+const navItems = [
+  { to: '/',             icon: LayoutDashboard, label: 'Início' },
+  { to: '/accounts',    icon: PiggyBank,        label: 'Contas' },
+  { to: '/transactions', icon: ArrowLeftRight,  label: 'Extrato' },
+  { to: '/chat',        icon: MessageSquare,    label: 'Chat' },
+]
+
+export default function BottomNav() {
+  return (
+    <nav className="md:hidden fixed bottom-0 inset-x-0 bg-slate-900 border-t border-slate-800 flex z-50">
+      {navItems.map(({ to, icon: Icon, label }) => (
+        <NavLink
+          key={to}
+          to={to}
+          end={to === '/'}
+          className={({ isActive }) =>
+            `flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium transition-colors duration-150 ${
+              isActive ? 'text-brand-400' : 'text-slate-500'
+            }`
+          }
+        >
+          <Icon size={20} />
+          {label}
+        </NavLink>
+      ))}
+    </nav>
+  )
+}
