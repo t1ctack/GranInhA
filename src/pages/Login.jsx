@@ -1,16 +1,33 @@
 import { useState } from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function Login() {
-  const { signInWithGoogle } = useAuth()
-  const [error, setError]   = useState(null)
-  const [busy, setBusy]     = useState(false)
+  const { user, loading, signInWithGoogle } = useAuth()
+  const navigate = useNavigate()
+  const [error, setError] = useState(null)
+  const [busy, setBusy]   = useState(false)
+
+  // Aguarda o Firebase confirmar o estado antes de decidir o que mostrar
+  if (loading) {
+    return (
+      <div className="min-h-dvh flex items-center justify-center bg-slate-950">
+        <span className="text-5xl animate-bounce">🐷</span>
+      </div>
+    )
+  }
+
+  // Já autenticado → manda direto para home
+  if (user) {
+    return <Navigate to="/" replace />
+  }
 
   async function handleGoogle() {
     setError(null)
     setBusy(true)
     try {
       await signInWithGoogle()
+      navigate('/', { replace: true })
     } catch (err) {
       setError('Não foi possível entrar com o Google. Tente novamente.')
       console.error(err)
