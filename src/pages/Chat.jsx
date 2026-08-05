@@ -38,6 +38,30 @@ const HELP_TEXT =
   '• "quanto tenho no total?"\n' +
   '• "desfazer"'
 
+function buildBestGuessText({ verbAction, amount, accountName }, accounts) {
+  const typeLabel = verbAction === 'add' ? 'entrada' : verbAction === 'deduct' ? 'saída' : null
+
+  const parts = []
+  if (typeLabel) parts.push(typeLabel)
+  if (amount != null) parts.push(`de ${formatCurrency(amount)}`)
+  if (accountName) parts.push(`na conta "${accountName}"`)
+
+  const prefix = parts.length ? `Entendi: ${parts.join(' ')}.` : ''
+
+  if (!typeLabel && amount != null) {
+    const fmt = formatCurrency(amount)
+    return `${prefix}\n\nIsso é uma entrada ou saída?\n• "adicione ${fmt}"\n• "desconte ${fmt}"`
+  }
+
+  if (typeLabel && amount == null) {
+    const verb = verbAction === 'add' ? 'adicione' : 'desconte'
+    const acc  = accountName ? ` no ${accountName}` : ''
+    return `${prefix}\n\nQual é o valor? Ex: "${verb} 50${acc}"`
+  }
+
+  return HELP_TEXT
+}
+
 // ─── Response text helpers ───────────────────────────────────────────────────
 
 function confirmText({ type, account, amount }) {
@@ -235,6 +259,7 @@ export default function Chat() {
       return confirmText(next)
     }
 
+    if (cmd.partial) return buildBestGuessText(cmd.partial, accounts)
     return HELP_TEXT
   }
 

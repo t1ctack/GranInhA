@@ -1,4 +1,4 @@
-// Natural language command parser
+// Natural language command parser — v2
 
 // ─── Type labels (normalized — no accents) ───────────────────────────────────
 const TYPE_LABELS = {
@@ -9,61 +9,55 @@ const TYPE_LABELS = {
   other:       'outro',
 }
 
-// ─── Regex patterns ───────────────────────────────────────────────────────────
-
-const UNDO_PATTERN = /^(?:desfazer?|cancelar?|undo|voltar|desfaz)$/i
-
-const DEDUCT_PATTERNS = [
-  // "desconte/gastei/paguei X do/da/de/no/na/em/com Y" — account specified
-  /(?:desconte?|retire|debite?|subtraia?|gaste?i?)\s+(?:R\$\s*)?(\d+(?:[.,]\d{2})?)\s+(?:do?|da?|de?|no?|na?|em|com)\s+(.+)/i,
-  /(?:paguei?|pagou|comprei?|comprou)\s+(?:R\$\s*)?(\d+(?:[.,]\d{2})?)\s+(?:com|no?|na?|do?|da?|de?|em)\s+(.+)/i,
-  // "gastei/paguei X" — no account specified (accountName → null)
-  /^(?:gastei?|paguei?|comprei|saiu|tirei)\s+(?:R\$\s*)?(\d+(?:[.,]\d{2})?)(?:\s+.*)?$/i,
+// ─── Action verb dictionaries ─────────────────────────────────────────────────
+const INCOME_VERBS = [
+  'adicione','adiciona','adicionei','adicionar',
+  'coloque','coloquei','colocar',
+  'deposite','depositei','depositar',
+  'recebi','receber',
+  'ganhei','ganhar',
+  'entrou','caiu',
+]
+const EXPENSE_VERBS = [
+  'desconte','desconta','descontei','descontar',
+  'tire','tirei','tirar',
+  'gaste','gastei','gastar',
+  'pague','paguei','pagar',
+  'saiu',
+  'retire','retirei','retirar',
+  'comprei','compra','comprar',
+  'debite','debitei','debitar',
+  'subtraia','subtrair',
+]
+const UNDO_VERBS = [
+  'desfazer','desfaz','desfaca',
+  'cancelar','cancela',
+  'undo','voltar',
 ]
 
-const ADD_PATTERNS = [
-  // "adicione/deposite/recebi X no/na/em Y" — account specified
-  /(?:adicion(?:e|ar|ou|ei)|deposit(?:e|ar|ou|ei)|coloque?|receb(?:i|eu))\s+(?:R\$\s*)?(\d+(?:[.,]\d{2})?)\s+(?:no?|na?|em|do?|da?|de?)\s+(.+)/i,
-  /(?:entrou?|caiu?)\s+(?:R\$\s*)?(\d+(?:[.,]\d{2})?)\s+(?:no?|na?|em)\s+(.+)/i,
-  // "recebi/ganhei X" — no account
-  /^(?:recebi|ganhei|entrou|caiu)\s+(?:R\$\s*)?(\d+(?:[.,]\d{2})?)(?:\s+.*)?$/i,
+// ─── Prepositions that introduce the account name ────────────────────────────
+// Longest-first so multi-word entries are tried before single-word sub-strings
+const ACCOUNT_PREPS = [
+  'para o','para a','para os','para as','para',
+  'pro','pra',
+  'num','numa','no','na',
+  'ao',
+  'em',
+  'do','da',
+  'a',
+  'de',
+  'com',
 ]
+const PREP_RE = new RegExp(
+  `\\b(${ACCOUNT_PREPS.map(p => p.replace(/\s+/g, '\\s+')).join('|')})\\b`,
+  'i',
+)
 
-const BALANCE_PATTERNS = [
-  /(?:quanto\s+(?:tenho|tem|h[aá])|saldo|total|meu\s+saldo)(?:\s+(?:no?|na?|em|do?|da?|de?)\s+(.+))?/i,
-  /quanto\s+(?:tem|tenho|h[aá])\s+(?:no?|na?|em|do?|da?)\s+(.+)/i,
-]
-
-function parseAmount(str) {
-  return parseFloat(String(str).replace(/\./g, '').replace(',', '.'))
-}
-
-export function parseCommand(text) {
-  const t = text.trim()
-
-  if (UNDO_PATTERN.test(t)) return { action: 'undo' }
-
-  for (const p of DEDUCT_PATTERNS) {
-    const m = t.match(p)
-    if (m) return { action: 'deduct', amount: parseAmount(m[1]), accountName: m[2]?.trim() ?? null }
-  }
-
-  for (const p of ADD_PATTERNS) {
-    const m = t.match(p)
-    if (m) return { action: 'add', amount: parseAmount(m[1]), accountName: m[2]?.trim() ?? null }
-  }
-
-  for (const p of BALANCE_PATTERNS) {
-    const m = t.match(p)
-    if (m) return { action: 'balance', accountName: m[1]?.trim() ?? null }
-  }
-
-  return { action: 'unknown' }
-}
+// Patterns that introduce an optional description after the account name
+const DESC_SEP_RE  = /\s+(?:de|com|referente(?:\s+a)?)\s+/i
+const DESC_LEAD_RE = /^(?:de|com|referente\s*a?\s*)/i
 
 // ─── Normalization ────────────────────────────────────────────────────────────
-
-/** Lowercase, remove diacritics (U+0300–U+036F), strip non-alphanumeric */
 export function normalize(s) {
   return String(s)
     .toLowerCase()
@@ -74,7 +68,6 @@ export function normalize(s) {
 }
 
 // ─── Levenshtein distance ─────────────────────────────────────────────────────
-
 function levenshtein(a, b) {
   if (a === b) return 0
   if (!a.length) return b.length
@@ -95,18 +88,170 @@ function levenshtein(a, b) {
   return prev[b.length]
 }
 
-/** Max edit distance allowed for a string of a given length */
 function fuzzyThreshold(len) {
   if (len <= 4) return 1
   if (len <= 7) return 2
   return 3
 }
 
-// ─── Account finder ───────────────────────────────────────────────────────────
+// ─── Verb / action matching ───────────────────────────────────────────────────
+function bestDist(word, list) {
+  let best = Infinity
+  for (const v of list) {
+    const d = levenshtein(word, v)
+    if (d < best) best = d
+  }
+  return best
+}
 
-function hit(account)       { return { match: account, multiple: false, candidates: [account] } }
-function multi(candidates)  { return { match: null,    multiple: true,  candidates } }
-const NONE                = { match: null, multiple: false, candidates: [] }
+/**
+ * Fuzzy-match the first word against action verb dictionaries.
+ * Returns 'add' | 'deduct' | 'undo' | null
+ */
+function matchAction(word) {
+  const w = normalize(word)
+  if (!w) return null
+
+  const thr  = fuzzyThreshold(w.length)
+  const dInc = bestDist(w, INCOME_VERBS)
+  const dExp = bestDist(w, EXPENSE_VERBS)
+  const dUnd = bestDist(w, UNDO_VERBS)
+  const min  = Math.min(dInc, dExp, dUnd)
+
+  if (min > thr) return null
+  if (dUnd === min) return 'undo'
+  if (dInc === min) return 'add'
+  return 'deduct'
+}
+
+// ─── Amount extraction ─────────────────────────────────────────────────────────
+// Matches: R$10, R$ 10, 10 reais, 10,00, 1.000, 1.000,00, 10.00, etc.
+const AMOUNT_RE = /(?:R\$\s*)?\d+(?:[.,]\d{1,3})*\s*(?:reais?|brl)?/i
+
+function parseAmount(raw) {
+  const s = raw
+    .replace(/R\$\s*/i, '')
+    .replace(/\s*(?:reais?|brl)\s*$/i, '')
+    .trim()
+  // BRL: comma as decimal separator OR dot as thousands separator
+  if (s.includes(',') || /\d\.\d{3}/.test(s)) {
+    return parseFloat(s.replace(/\./g, '').replace(',', '.'))
+  }
+  return parseFloat(s)
+}
+
+/** Returns { value, start, end } or null */
+function extractAmount(text) {
+  const m = AMOUNT_RE.exec(text)
+  if (!m) return null
+  return { value: parseAmount(m[0]), start: m.index, end: m.index + m[0].length }
+}
+
+// ─── Account + description extraction ─────────────────────────────────────────
+/**
+ * Given text that begins with (or contains) a preposition followed by an
+ * account name and optional description, returns:
+ *   { accountName, description, found }
+ * `found` is true if a preposition was matched.
+ */
+function parseAccountFromText(text) {
+  const prepMatch = PREP_RE.exec(text)
+  if (!prepMatch) return { accountName: null, description: null, found: false }
+
+  const afterPrep = text.slice(prepMatch.index + prepMatch[0].length).trim()
+  if (!afterPrep) return { accountName: null, description: null, found: true }
+
+  // Split account name from optional description
+  const descSplit = DESC_SEP_RE.exec(afterPrep)
+  let accountName, description
+  if (descSplit) {
+    accountName = afterPrep.slice(0, descSplit.index).trim() || null
+    description = afterPrep.slice(descSplit.index).trim().replace(DESC_LEAD_RE, '').trim() || null
+  } else {
+    accountName = afterPrep || null
+    description = null
+  }
+
+  return { accountName, description, found: true }
+}
+
+// ─── Balance query ─────────────────────────────────────────────────────────────
+const BALANCE_RE     = /(?:quanto\s+(?:tenho|tem|h[aá])|saldo|total|meu\s+saldo)/i
+const BALANCE_ACC_RE = /\b(?:no?|na?|em|do?|da?|de?)\s+(.+)/i
+
+// ─── Main parser ───────────────────────────────────────────────────────────────
+export function parseCommand(text) {
+  const t     = text.trim()
+  const words = t.split(/\s+/)
+
+  // ── Balance ─────────────────────────────────────────────────────────────────
+  if (BALANCE_RE.test(t)) {
+    const m = BALANCE_ACC_RE.exec(t)
+    return { action: 'balance', accountName: m?.[1]?.trim() ?? null }
+  }
+
+  // ── Detect verb via fuzzy match on first word ────────────────────────────────
+  const action = matchAction(words[0] ?? '')
+
+  if (action === 'undo') return { action: 'undo' }
+
+  if (action === 'add' || action === 'deduct') {
+    const rest = t.slice(words[0].length).trim()
+    const amt  = extractAmount(rest)
+
+    if (amt) {
+      const beforeAmt = rest.slice(0, amt.start).trim()
+      const afterAmt  = rest.slice(amt.end).trim()
+
+      // Standard order: [verb] [amount] [prep] [account] [desc?]
+      const stdAcc = parseAccountFromText(afterAmt)
+      if (stdAcc.found) {
+        return { action, amount: amt.value, accountName: stdAcc.accountName, description: stdAcc.description }
+      }
+
+      // Alt order: [verb] [prep] [account] [amount]
+      if (beforeAmt) {
+        const altAcc = parseAccountFromText(beforeAmt)
+        if (altAcc.found) {
+          return { action, amount: amt.value, accountName: altAcc.accountName, description: null }
+        }
+      }
+
+      // No account preposition found — amount only
+      return { action, amount: amt.value, accountName: null, description: null }
+    }
+
+    // Verb recognized but no amount — try to salvage account name
+    const acctInfo = parseAccountFromText(rest)
+    return {
+      action:  'unknown',
+      partial: { verbAction: action, amount: null, accountName: acctInfo.accountName },
+    }
+  }
+
+  // ── No verb recognized — look for partial clues ────────────────────────────
+  const amt = extractAmount(t)
+  if (amt) {
+    const afterAmt = t.slice(amt.end).trim()
+    const acctInfo = parseAccountFromText(afterAmt)
+    return {
+      action:  'unknown',
+      partial: { verbAction: null, amount: amt.value, accountName: acctInfo.accountName },
+    }
+  }
+
+  return { action: 'unknown' }
+}
+
+// ─── Normalization ── (re-exported for Chat.jsx YES/NO matching) ──────────────
+// (already exported above)
+
+// ─── Levenshtein ── (already defined above) ───────────────────────────────────
+
+// ─── Account finder ───────────────────────────────────────────────────────────
+function hit(account)      { return { match: account, multiple: false, candidates: [account] } }
+function multi(candidates) { return { match: null,    multiple: true,  candidates } }
+const NONE               = { match: null, multiple: false, candidates: [] }
 
 /**
  * Four-stage fuzzy account lookup.
@@ -123,19 +268,18 @@ export function findAccount(accounts, query) {
   const q = normalize(query)
   if (!q) return NONE
 
-  // Pre-compute search targets per account
   const data = accounts.map(a => ({
     a,
     nameN: normalize(a.name),
     typeN: normalize(TYPE_LABELS[a.type] ?? ''),
   }))
 
-  // ── Stage 1: exact ──────────────────────────────────────────────────────────
+  // Stage 1: exact
   const exact = data.filter(({ nameN, typeN }) => nameN === q || typeN === q)
   if (exact.length === 1) return hit(exact[0].a)
   if (exact.length > 1)   return multi(exact.map(x => x.a))
 
-  // ── Stage 2: containment ────────────────────────────────────────────────────
+  // Stage 2: containment
   const contains = data.filter(({ nameN, typeN }) =>
     nameN.includes(q) || q.includes(nameN) ||
     (typeN && (typeN.includes(q) || q.includes(typeN)))
@@ -143,7 +287,7 @@ export function findAccount(accounts, query) {
   if (contains.length === 1) return hit(contains[0].a)
   if (contains.length > 1)   return multi(contains.map(x => x.a))
 
-  // ── Stage 3: word-level overlap ─────────────────────────────────────────────
+  // Stage 3: word-level overlap (words ≥ 3 chars)
   const qWords3 = q.split(/\s+/).filter(w => w.length >= 3)
   if (qWords3.length) {
     const wordMatch = data.filter(({ nameN, typeN }) => {
@@ -154,15 +298,12 @@ export function findAccount(accounts, query) {
     if (wordMatch.length > 1)   return multi(wordMatch.map(x => x.a))
   }
 
-  // ── Stage 4: Levenshtein (name only — type labels are short, prone to false positives) ──
+  // Stage 4: Levenshtein on name words (≥ 4 chars; not type — prevents false positives)
   const qWords4 = q.split(/\s+/).filter(w => w.length >= 4)
-
   const leven = data.filter(({ nameN }) => {
-    // Full-string comparison
     if (q.length >= 4 && nameN.length >= 4) {
       if (levenshtein(q, nameN) <= fuzzyThreshold(q.length)) return true
     }
-    // Word-level comparison
     const nameWords4 = nameN.split(/\s+/).filter(w => w.length >= 4)
     return qWords4.some(qw =>
       nameWords4.some(nw => levenshtein(qw, nw) <= fuzzyThreshold(qw.length))
