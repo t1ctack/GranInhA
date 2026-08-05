@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
-import logoIcon from '@/assets/logo-icon.png'
+import logoIcon from '@/assets/logo-icon-cropped.png'
 
 export default function RequireAuth({ children }) {
   const { user, loading } = useAuth()

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
-import logoFull from '@/assets/logo-full.png'
-import logoIcon from '@/assets/logo-icon.png'
+import logoFull from '@/assets/logo-full-cropped.png'
+import logoIcon from '@/assets/logo-icon-cropped.png'
 
 export default function Login() {
   const { user, loading, signInWithGoogle } = useAuth()

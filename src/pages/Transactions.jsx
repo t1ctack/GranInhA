@@ -6,7 +6,7 @@ import TransactionFormModal from '@/components/transactions/TransactionFormModal
 import TransactionItem from '@/components/transactions/TransactionItem'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import { groupByDay, formatCurrency } from '@/services/formatters'
-import logoIcon from '@/assets/logo-icon.png'
+import logoIcon from '@/assets/logo-icon-cropped.png'
 
 function SkeletonRow() {
   return <div className="h-14 rounded-xl animate-pulse bg-gray-100 dark:bg-dm-muted/60 my-1" />

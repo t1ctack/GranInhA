@@ -8,7 +8,7 @@ import TransactionFormModal from '@/components/transactions/TransactionFormModal
 import TransactionItem from '@/components/transactions/TransactionItem'
 import { formatCurrency } from '@/services/formatters'
 import { TYPE_META } from '@/components/accounts/AccountCard'
-import logoIcon from '@/assets/logo-icon.png'
+import logoIcon from '@/assets/logo-icon-cropped.png'
 
 function SkeletonCard() {
   return <div className="card h-20 animate-pulse bg-gray-100 dark:bg-dm-muted/60 !p-0" />

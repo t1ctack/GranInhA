@@ -4,7 +4,7 @@ import { useAccounts } from '@/hooks/useAccounts'
 import AccountCard from '@/components/accounts/AccountCard'
 import AccountFormModal from '@/components/accounts/AccountFormModal'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
-import logoIcon from '@/assets/logo-icon.png'
+import logoIcon from '@/assets/logo-icon-cropped.png'
 
 function SkeletonCard() {
   return <div className="card h-32 animate-pulse bg-gray-100 dark:bg-dm-muted/60 !p-0" />

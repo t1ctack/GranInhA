@@ -3,7 +3,7 @@ import { Sun, Moon } from 'lucide-react'
 import Sidebar from './Sidebar'
 import BottomNav from './BottomNav'
 import { useTheme } from '@/contexts/ThemeContext'
-import logoIcon from '@/assets/logo-icon.png'
+import logoIcon from '@/assets/logo-icon-cropped.png'
 
 export default function Layout() {
   const { theme, toggleTheme } = useTheme()

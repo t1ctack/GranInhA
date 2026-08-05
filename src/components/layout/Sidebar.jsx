@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { PiggyBank, LayoutDashboard, ArrowLeftRight, MessageSquare, LogOut, Sun, Moon } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
-import logoFull from '@/assets/logo-full.png'
+import logoFull from '@/assets/logo-full-cropped.png'
 
 const navItems = [
   { to: '/',             icon: LayoutDashboard, label: 'Início' },
