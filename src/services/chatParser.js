@@ -1,5 +1,9 @@
 // Natural language command parser — v2
 
+import { CATEGORIES } from '../constants/categories.js'
+
+const CATEGORY_IDS = CATEGORIES.map(c => c.id)
+
 // ─── Category keyword inference (normalized — no accents) ────────────────────
 const CATEGORY_KEYWORDS = {
   alimentacao: ['mercado','supermercado','ifood','restaurante','lanche','lanchonete','comida','padaria','acougue','feira','pizza','delivery'],
@@ -20,6 +24,45 @@ export function inferCategory(text) {
     if (keywords.some(kw => n.includes(kw))) return category
   }
   return 'outros'
+}
+
+/** Fuzzy-matches a single normalized word against a category id (typo-tolerant, Levenshtein). */
+function matchCategoryWord(word) {
+  if (CATEGORY_IDS.includes(word)) return word
+  if (word.length < 4) return null
+  let best = null, bestDist = Infinity
+  for (const id of CATEGORY_IDS) {
+    const d = levenshtein(word, id)
+    if (d < bestDist) { bestDist = d; best = id }
+  }
+  return bestDist <= fuzzyThreshold(word.length) ? best : null
+}
+
+/**
+ * Looks for the user naming a category explicitly anywhere in the sentence
+ * (e.g. "categoria transporte", or bare "...em alimentação..."), typo-tolerant.
+ * Returns { id, raw } — `raw` is the exact substring matched, for stripping it
+ * out of the text before account/amount parsing — or null if none found.
+ */
+export function findExplicitCategory(text) {
+  const explicitMarker = /categoria\s+(\S+)/i.exec(text)
+  if (explicitMarker) {
+    const id = matchCategoryWord(normalize(explicitMarker[1]))
+    if (id) return { id, raw: explicitMarker[0] }
+  }
+
+  for (const raw of text.split(/\s+/)) {
+    const id = matchCategoryWord(normalize(raw))
+    if (id) return { id, raw }
+  }
+
+  return null
+}
+
+function stripMention(text, raw) {
+  const idx = text.toLowerCase().indexOf(raw.toLowerCase())
+  if (idx === -1) return text
+  return (text.slice(0, idx) + text.slice(idx + raw.length)).replace(/\s+/g, ' ').trim()
 }
 
 // ─── Type labels (normalized — no accents) ───────────────────────────────────
@@ -218,9 +261,15 @@ export function parseCommand(text) {
   if (action === 'undo') return { action: 'undo' }
 
   if (action === 'add' || action === 'deduct') {
-    const rest     = t.slice(words[0].length).trim()
-    const amt      = extractAmount(rest)
-    const category = inferCategory(t)
+    let rest = t.slice(words[0].length).trim()
+
+    // An explicit category mention takes priority over keyword inference, and
+    // is stripped out first so it can't be mistaken for the account name.
+    const explicitCat = findExplicitCategory(rest)
+    if (explicitCat) rest = stripMention(rest, explicitCat.raw)
+    const category = explicitCat?.id ?? inferCategory(t)
+
+    const amt = extractAmount(rest)
 
     if (amt) {
       const beforeAmt = rest.slice(0, amt.start).trim()
@@ -251,6 +300,11 @@ export function parseCommand(text) {
       partial: { verbAction: action, amount: null, accountName: acctInfo.accountName },
     }
   }
+
+  // ── List available categories ───────────────────────────────────────────────
+  // Only reachable when no transaction verb matched, so "categoria X" inside a
+  // real command never gets mistaken for this intent.
+  if (/categorias?/i.test(t)) return { action: 'categories' }
 
   // ── No verb recognized — look for partial clues ────────────────────────────
   const amt = extractAmount(t)

@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
-import { Send, Bot } from 'lucide-react'
+import { Send, Bot, ChevronDown } from 'lucide-react'
 import { useAccounts } from '@/hooks/useAccounts'
 import { useTransactions } from '@/hooks/useTransactions'
 import { useChatHistory } from '@/hooks/useChatHistory'
-import { parseCommand, findAccount, normalize, formatCurrency } from '@/services/chatParser'
+import { parseCommand, findAccount, findExplicitCategory, normalize, formatCurrency } from '@/services/chatParser'
 import { TYPE_META } from '@/components/accounts/AccountCard'
+import { CATEGORIES, getCategory, DEFAULT_CATEGORY_ID } from '@/constants/categories'
 
 // ─── Confirmation matchers (applied to normalized input) ─────────────────────
 const YES = /^(sim|s|confirma?|ok|yes|pode|vai|e)$/i
@@ -25,7 +26,9 @@ const WELCOME = {
     'Diga o que quer fazer em linguagem natural:\n\n' +
     '• "desconte 300 do Porquinho do Inter"\n' +
     '• "adicione 500 na Carteira"\n' +
+    '• "gastei 50 em alimentação"\n' +
     '• "quanto tenho no total?"\n' +
+    '• "categorias" — veja as categorias disponíveis\n' +
     '• "desfazer" — reverte a última transação desta sessão',
 }
 
@@ -64,17 +67,27 @@ function buildBestGuessText({ verbAction, amount, accountName }, accounts) {
 
 // ─── Response text helpers ───────────────────────────────────────────────────
 
-function confirmText({ type, account, amount }) {
+function confirmText({ type, account, amount, category }) {
   const delta      = type === 'income' ? amount : -amount
   const newBalance = (account.balance ?? 0) + delta
   const verb       = type === 'income' ? 'Adicionar' : 'Descontar'
   const prep       = type === 'income' ? 'em' : 'de'
   const typeLabel  = TYPE_META[account.type]?.label ?? 'Conta'
+  const cat        = getCategory(category)
+  const catLine    = cat.id === DEFAULT_CATEGORY_ID
+    ? `Categoria: ${cat.emoji} Outros (responda com o nome de uma categoria para especificar, ou confirme para manter como Outros)`
+    : `Categoria: ${cat.emoji} ${cat.label}`
   return (
     `Confirma? ${verb} ${formatCurrency(amount)} ${prep} ${account.name} (${typeLabel}).\n` +
+    `${catLine}\n` +
     `Saldo atual: ${formatCurrency(account.balance ?? 0)} → Novo saldo: ${formatCurrency(newBalance)}\n\n` +
     `Responda "sim" para confirmar ou "não" para cancelar.`
   )
+}
+
+function categoriesListText() {
+  const lines = CATEGORIES.map(c => `${c.emoji} ${c.label}`).join('\n')
+  return `📋 Categorias disponíveis:\n\n${lines}`
 }
 
 function noAccountText(name, accounts) {
@@ -104,9 +117,40 @@ function buildSuggestions(accounts) {
   sug.push(a1 ? `adicione 200 no ${a1.name}` : `adicione 200 no ${a0.name}`)
   sug.push(`quanto tenho no ${a0.name}?`)
   sug.push('quanto tenho no total?')
+  sug.push('categorias')
   sug.push('desfazer')
 
-  return sug.slice(0, 5)
+  return sug.slice(0, 6)
+}
+
+// ─── Category legend (collapsible) ────────────────────────────────────────────
+
+function CategoryLegend() {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="shrink-0">
+      <button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        className="flex items-center gap-1 text-xs text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors px-1"
+      >
+        <ChevronDown size={12} className={`transition-transform duration-150 ${open ? 'rotate-180' : ''}`} />
+        Ver categorias disponíveis
+      </button>
+      {open && (
+        <div className="flex flex-wrap gap-1.5 mt-2 px-1">
+          {CATEGORIES.map(cat => (
+            <span
+              key={cat.id}
+              className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-gray-100 dark:bg-dm-muted text-gray-600 dark:text-slate-300"
+            >
+              <span>{cat.emoji}</span>{cat.label}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -185,6 +229,13 @@ export default function Chat() {
         setPendingCmd(null)
         return '❌ Cancelado. Pode mandar outro comando!'
       }
+      // Reply naming a category — update the pending category and re-confirm
+      const catMatch = findExplicitCategory(text)
+      if (catMatch) {
+        const next = { ...pendingCmd, category: catMatch.id }
+        setPendingCmd(next)
+        return confirmText(next)
+      }
       // Not yes/no — show confirmation again
       return `Por favor, responda "sim" ou "não".\n\n${confirmText(pendingCmd)}`
     }
@@ -215,6 +266,11 @@ export default function Chat() {
       lastChatTxRef.current = null
       const verb = tx.type === 'income' ? 'entrada' : 'saída'
       return `↩️ Feito! Desfiz a ${verb} de ${formatCurrency(tx.amount)}.`
+    }
+
+    // List available categories
+    if (cmd.action === 'categories') {
+      return categoriesListText()
     }
 
     // Balance query
@@ -354,6 +410,8 @@ export default function Chat() {
             </div>
           )
         )}
+
+        <CategoryLegend />
 
         <div className="flex gap-2">
           <input
