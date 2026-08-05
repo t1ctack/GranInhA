@@ -9,12 +9,19 @@ import {
   serverTimestamp,
   query,
   orderBy,
+  where,
+  getDocs,
+  writeBatch,
 } from 'firebase/firestore'
 import { db } from '@/services/firebase'
 import { useAuth } from '@/contexts/AuthContext'
 
 function accountsRef(uid) {
   return collection(db, 'users', uid, 'accounts')
+}
+
+function transactionsRef(uid) {
+  return collection(db, 'users', uid, 'transactions')
 }
 
 export function useAccounts() {
@@ -57,8 +64,23 @@ export function useAccounts() {
     await updateDoc(doc(db, 'users', user.uid, 'accounts', id), { name, type, color })
   }
 
-  async function removeAccount(id) {
-    await deleteDoc(doc(db, 'users', user.uid, 'accounts', id))
+  /** Deletes the account. When `withTransactions` is true, also deletes every
+   *  transaction linked to it — otherwise they're left as orphaned history. */
+  async function removeAccount(id, { withTransactions = false } = {}) {
+    if (!withTransactions) {
+      await deleteDoc(doc(db, 'users', user.uid, 'accounts', id))
+      return
+    }
+
+    const snap = await getDocs(query(transactionsRef(user.uid), where('accountId', '==', id)))
+    const refs = [...snap.docs.map(d => d.ref), doc(db, 'users', user.uid, 'accounts', id)]
+
+    const CHUNK = 450 // stays under Firestore's 500-write batch limit
+    for (let i = 0; i < refs.length; i += CHUNK) {
+      const batch = writeBatch(db)
+      refs.slice(i, i + CHUNK).forEach(ref => batch.delete(ref))
+      await batch.commit()
+    }
   }
 
   const totalBalance = accounts.reduce((sum, acc) => sum + (acc.balance ?? 0), 0)

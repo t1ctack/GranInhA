@@ -9,6 +9,8 @@ import {
   orderBy,
   limit,
   Timestamp,
+  getDocs,
+  writeBatch,
 } from 'firebase/firestore'
 import { db } from '@/services/firebase'
 import { useAuth } from '@/contexts/AuthContext'
@@ -83,6 +85,25 @@ export function useTransactions(maxItems = 200) {
     })
   }
 
+  /** Deletes the given transaction ids directly — no balance reversal (accounts are untouched). */
+  async function bulkDeleteTransactions(ids) {
+    if (!ids.length) return
+    const CHUNK = 450 // stays under Firestore's 500-write batch limit
+    for (let i = 0; i < ids.length; i += CHUNK) {
+      const batch = writeBatch(db)
+      ids.slice(i, i + CHUNK).forEach(id => batch.delete(doc(db, 'users', user.uid, 'transactions', id)))
+      await batch.commit()
+    }
+  }
+
+  /** Wipes the user's entire transaction history (fetches the full collection, not just the loaded page). */
+  async function deleteAllTransactions() {
+    const snap = await getDocs(txsRef(user.uid))
+    const ids  = snap.docs.map(d => d.id)
+    await bulkDeleteTransactions(ids)
+    return ids.length
+  }
+
   const monthlyIncome = transactions
     .filter(t => t.type === 'income'  && isCurrentMonth(t.date))
     .reduce((s, t) => s + t.amount, 0)
@@ -91,5 +112,9 @@ export function useTransactions(maxItems = 200) {
     .filter(t => t.type === 'expense' && isCurrentMonth(t.date))
     .reduce((s, t) => s + t.amount, 0)
 
-  return { transactions, loading, createTransaction, deleteTransaction, monthlyIncome, monthlyExpense }
+  return {
+    transactions, loading, createTransaction, deleteTransaction,
+    bulkDeleteTransactions, deleteAllTransactions,
+    monthlyIncome, monthlyExpense,
+  }
 }

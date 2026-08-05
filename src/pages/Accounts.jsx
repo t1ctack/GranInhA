@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, AlertTriangle } from 'lucide-react'
 import { useAccounts } from '@/hooks/useAccounts'
 import AccountCard from '@/components/accounts/AccountCard'
 import AccountFormModal from '@/components/accounts/AccountFormModal'
-import ConfirmDialog from '@/components/ui/ConfirmDialog'
+import Modal from '@/components/ui/Modal'
 import logoIcon from '@/assets/logo-icon-cropped.png'
 
 function SkeletonCard() {
@@ -30,11 +30,11 @@ export default function Accounts() {
     }
   }
 
-  async function handleDelete() {
+  async function handleDelete(withTransactions) {
     if (!pendingDelete) return
     setDeleteLoading(true)
     try {
-      await removeAccount(pendingDelete.id)
+      await removeAccount(pendingDelete.id, { withTransactions })
       setPendingDelete(null)
     } finally {
       setDeleteLoading(false)
@@ -85,15 +85,52 @@ export default function Accounts() {
       )}
 
       {pendingDelete && (
-        <ConfirmDialog
-          title="Excluir conta"
-          description={`Tem certeza que deseja excluir "${pendingDelete.name}"? As transações associadas não serão mais exibidas.`}
-          confirmLabel="Excluir conta"
-          danger
-          loading={deleteLoading}
-          onConfirm={handleDelete}
-          onClose={() => setPendingDelete(null)}
-        />
+        <Modal title="Excluir conta" onClose={() => !deleteLoading && setPendingDelete(null)}>
+          <div className="space-y-4">
+            <div className="flex gap-3 p-4 bg-amber-500/10 rounded-xl border border-amber-500/20">
+              <AlertTriangle size={18} className="text-amber-400 shrink-0 mt-0.5" />
+              <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed">
+                Tem certeza que deseja excluir <strong>{pendingDelete.name}</strong>? O que fazer com o histórico de transações dessa conta?
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => handleDelete(true)}
+                disabled={deleteLoading}
+                className="w-full text-left px-4 py-3 rounded-xl border border-red-500/30 bg-red-500/5 hover:bg-red-500/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                  {deleteLoading ? 'Excluindo…' : 'Excluir conta e histórico'}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
+                  Remove a conta e todas as transações vinculadas a ela.
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleDelete(false)}
+                disabled={deleteLoading}
+                className="w-full text-left px-4 py-3 rounded-xl border border-gray-200 dark:border-dm-border hover:bg-gray-50 dark:hover:bg-dm-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <p className="text-sm font-medium text-gray-900 dark:text-slate-100">
+                  {deleteLoading ? 'Excluindo…' : 'Excluir apenas a conta'}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
+                  Mantém o histórico — as transações passam a aparecer como órfãs no Extrato.
+                </p>
+              </button>
+            </div>
+
+            <div className="flex justify-end">
+              <button type="button" onClick={() => setPendingDelete(null)} disabled={deleteLoading} className="btn-ghost">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   )

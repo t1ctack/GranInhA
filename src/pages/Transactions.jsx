@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { Plus, MoreVertical, AlertTriangle, Eraser } from 'lucide-react'
 import { useTransactions } from '@/hooks/useTransactions'
 import { useAccounts } from '@/hooks/useAccounts'
 import TransactionFormModal from '@/components/transactions/TransactionFormModal'
@@ -13,15 +13,35 @@ function SkeletonRow() {
 }
 
 export default function Transactions() {
-  const { transactions, loading, createTransaction, deleteTransaction } = useTransactions()
+  const {
+    transactions, loading, createTransaction, deleteTransaction,
+    bulkDeleteTransactions, deleteAllTransactions,
+  } = useTransactions()
   const { accounts } = useAccounts()
 
-  const [showForm,      setShowForm]      = useState(false)
-  const [pendingDelete, setPendingDelete] = useState(null)
-  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [showForm,        setShowForm]        = useState(false)
+  const [pendingDelete,   setPendingDelete]   = useState(null)
+  const [deleteLoading,   setDeleteLoading]   = useState(false)
+  const [menuOpen,        setMenuOpen]        = useState(false)
+  const [showOrphanConfirm,   setShowOrphanConfirm]   = useState(false)
+  const [orphanLoading,       setOrphanLoading]       = useState(false)
+  const [showClearAllConfirm, setShowClearAllConfirm] = useState(false)
+  const [clearAllLoading,     setClearAllLoading]     = useState(false)
+
+  const menuRef = useRef(null)
 
   const accountMap = Object.fromEntries(accounts.map(a => [a.id, a]))
   const groups     = groupByDay(transactions)
+  const orphanTxs  = transactions.filter(t => !accountMap[t.accountId])
+
+  useEffect(() => {
+    if (!menuOpen) return
+    function handler(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [menuOpen])
 
   async function handleDelete() {
     if (!pendingDelete) return
@@ -34,6 +54,26 @@ export default function Transactions() {
     }
   }
 
+  async function handleClearOrphans() {
+    setOrphanLoading(true)
+    try {
+      await bulkDeleteTransactions(orphanTxs.map(t => t.id))
+      setShowOrphanConfirm(false)
+    } finally {
+      setOrphanLoading(false)
+    }
+  }
+
+  async function handleClearAll() {
+    setClearAllLoading(true)
+    try {
+      await deleteAllTransactions()
+      setShowClearAllConfirm(false)
+    } finally {
+      setClearAllLoading(false)
+    }
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
@@ -42,12 +82,55 @@ export default function Transactions() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Extrato</h1>
           <p className="text-gray-500 dark:text-slate-400 text-sm mt-1">Histórico de transações</p>
         </div>
-        <button onClick={() => setShowForm(true)} className="btn-primary flex items-center gap-2">
-          <Plus size={16} />
-          <span className="hidden sm:inline">Nova Transação</span>
-          <span className="sm:hidden">Nova</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setShowForm(true)} className="btn-primary flex items-center gap-2">
+            <Plus size={16} />
+            <span className="hidden sm:inline">Nova Transação</span>
+            <span className="sm:hidden">Nova</span>
+          </button>
+
+          <div ref={menuRef} className="relative shrink-0">
+            <button
+              onClick={() => setMenuOpen(v => !v)}
+              className="btn-ghost !p-2.5"
+              aria-label="Opções do extrato"
+            >
+              <MoreVertical size={18} />
+            </button>
+
+            {menuOpen && (
+              <div className="absolute right-0 top-11 z-20 bg-white dark:bg-dm-muted border border-gray-200 dark:border-dm-border rounded-xl shadow-xl w-56 overflow-hidden">
+                <button
+                  onClick={() => { setMenuOpen(false); setShowClearAllConfirm(true) }}
+                  disabled={transactions.length === 0}
+                  className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm hover:bg-red-500/10 text-red-500 dark:text-red-400 transition-colors text-left disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                >
+                  <Eraser size={14} />
+                  Limpar todo o histórico
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
+
+      {/* Orphan transactions banner */}
+      {orphanTxs.length > 0 && (
+        <div className="flex items-center justify-between gap-3 p-4 bg-amber-500/10 rounded-xl border border-amber-500/20">
+          <div className="flex items-center gap-3 min-w-0">
+            <AlertTriangle size={18} className="text-amber-500 shrink-0" />
+            <p className="text-sm text-gray-700 dark:text-slate-300">
+              {orphanTxs.length} {orphanTxs.length > 1 ? 'transações pertencem' : 'transação pertence'} a contas que foram excluídas.
+            </p>
+          </div>
+          <button
+            onClick={() => setShowOrphanConfirm(true)}
+            className="text-xs font-semibold text-amber-700 dark:text-amber-400 hover:underline shrink-0 whitespace-nowrap"
+          >
+            Limpar transações órfãs
+          </button>
+        </div>
+      )}
 
       {/* Body */}
       {loading ? (
@@ -94,6 +177,31 @@ export default function Transactions() {
           loading={deleteLoading}
           onConfirm={handleDelete}
           onClose={() => setPendingDelete(null)}
+        />
+      )}
+
+      {showOrphanConfirm && (
+        <ConfirmDialog
+          title="Limpar transações órfãs"
+          description={`Isso vai remover ${orphanTxs.length} ${orphanTxs.length > 1 ? 'transações vinculadas' : 'transação vinculada'} a contas que não existem mais. Suas contas atuais não serão afetadas.`}
+          confirmLabel="Limpar"
+          danger
+          loading={orphanLoading}
+          onConfirm={handleClearOrphans}
+          onClose={() => setShowOrphanConfirm(false)}
+        />
+      )}
+
+      {showClearAllConfirm && (
+        <ConfirmDialog
+          title="Limpar todo o histórico"
+          description="Isso vai apagar PERMANENTEMENTE todas as suas transações. Suas contas e saldos atuais não serão alterados — apenas o histórico de lançamentos. Essa ação não pode ser desfeita."
+          confirmLabel="Apagar tudo"
+          danger
+          requireTypedConfirmation="CONFIRMAR"
+          loading={clearAllLoading}
+          onConfirm={handleClearAll}
+          onClose={() => setShowClearAllConfirm(false)}
         />
       )}
     </div>
