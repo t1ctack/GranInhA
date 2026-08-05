@@ -108,4 +108,27 @@
   .dark .badge-expense {
     color: #f87171;
   }
+
+  /* Layout shell backgrounds — defined here so .dark .shell overrides
+     the light-mode rule via specificity within the same @layer */
+  .sidebar {
+    background-color: #ffffff;
+  }
+  .dark .sidebar {
+    background-color: #141414;
+  }
+
+  .layout-header {
+    background-color: #ffffff;
+  }
+  .dark .layout-header {
+    background-color: #141414;
+  }
+
+  .layout-nav {
+    background-color: #ffffff;
+  }
+  .dark .layout-nav {
+    background-color: #141414;
+  }
 }

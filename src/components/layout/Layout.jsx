@@ -13,7 +13,7 @@ export default function Layout() {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Mobile top header */}
-        <header className="md:hidden shrink-0 h-10 bg-white dark:bg-dm-surface border-b border-gray-200 dark:border-dm-border px-4 flex items-center justify-between">
+        <header className="layout-header md:hidden shrink-0 h-10 border-b px-4 flex items-center justify-between">
           <img src={logoIcon} alt="GranInhA" className="h-6 w-auto" />
           <button
             onClick={toggleTheme}

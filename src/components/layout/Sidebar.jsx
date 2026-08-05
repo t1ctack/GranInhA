@@ -16,9 +16,9 @@ export default function Sidebar() {
   const { theme, toggleTheme } = useTheme()
 
   return (
-    <aside className="hidden md:flex flex-col w-60 bg-white dark:bg-dm-surface border-r border-gray-200 dark:border-dm-border p-4 gap-2 shrink-0">
-      <div className="px-2 py-3 mb-4">
-        <img src={logoFull} alt="GranInhA" className="h-[70px] w-full object-contain object-left" />
+    <aside className="sidebar hidden md:flex flex-col w-60 border-r p-4 gap-2 shrink-0">
+      <div className="py-3 mb-4 overflow-hidden">
+        <img src={logoFull} alt="GranInhA" className="h-16 w-auto block" />
       </div>
 
       <nav className="flex-1 space-y-1">
