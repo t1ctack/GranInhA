@@ -305,8 +305,8 @@ export default function Chat() {
     <div className="flex flex-col h-[calc(100dvh-9.5rem)] md:h-[calc(100dvh-3rem)] animate-fade-in">
       {/* Header */}
       <div className="mb-4 shrink-0">
-        <h1 className="text-2xl font-bold">Chat</h1>
-        <p className="text-slate-400 text-sm mt-1">Gerencie suas finanças com linguagem natural</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Chat</h1>
+        <p className="text-gray-500 dark:text-slate-400 text-sm mt-1">Gerencie suas finanças com linguagem natural</p>
       </div>
 
       {/* Message area */}
@@ -316,7 +316,7 @@ export default function Chat() {
             {[0, 1, 2].map(i => (
               <span
                 key={i}
-                className="w-2 h-2 bg-slate-600 rounded-full animate-bounce"
+                className="w-2 h-2 bg-gray-300 dark:bg-slate-600 rounded-full animate-bounce"
                 style={{ animationDelay: `${i * 150}ms` }}
               />
             ))}
@@ -334,8 +334,8 @@ export default function Chat() {
       <div className="shrink-0 space-y-2 pt-2">
         {showSuggestions && (
           suggestions === null ? (
-            <p className="text-xs text-slate-500 px-1">
-              💡 Crie uma conta em <span className="text-brand-400">Contas</span> para começar a usar o chat.
+            <p className="text-xs text-gray-400 dark:text-slate-500 px-1">
+              💡 Crie uma conta em <span className="text-brand-600 dark:text-brand-400">Contas</span> para começar a usar o chat.
             </p>
           ) : (
             <div className="flex flex-wrap gap-2">
@@ -344,7 +344,7 @@ export default function Chat() {
                   key={cmd}
                   onClick={() => handleSend(cmd)}
                   disabled={thinking || messages === null}
-                  className="text-xs bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 px-3 py-1.5 rounded-full transition-colors"
+                  className="text-xs bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 disabled:opacity-40 text-gray-600 dark:text-slate-300 px-3 py-1.5 rounded-full transition-colors"
                 >
                   {cmd}
                 </button>
@@ -398,12 +398,12 @@ function MessageBubble({ msg }) {
           className={`rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap leading-relaxed ${
             isUser
               ? 'bg-brand-600 text-white rounded-tr-sm'
-              : 'bg-slate-800 text-slate-100 rounded-tl-sm'
+              : 'bg-gray-100 dark:bg-slate-800 text-gray-900 dark:text-slate-100 rounded-tl-sm'
           }`}
         >
           {msg.text}
         </div>
-        <span className="text-[10px] text-slate-600 px-1">
+        <span className="text-[10px] text-gray-400 dark:text-slate-600 px-1">
           {new Date(msg.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
         </span>
       </div>
@@ -417,12 +417,12 @@ function ThinkingBubble() {
       <div className="bg-brand-600/20 rounded-full p-1.5 h-8 w-8 flex items-center justify-center shrink-0">
         <Bot size={15} className="text-brand-400" />
       </div>
-      <div className="bg-slate-800 rounded-2xl rounded-tl-sm px-4 py-3.5">
+      <div className="bg-gray-100 dark:bg-slate-800 rounded-2xl rounded-tl-sm px-4 py-3.5">
         <div className="flex gap-1.5 items-center">
           {[0, 1, 2].map(i => (
             <span
               key={i}
-              className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
+              className="w-1.5 h-1.5 bg-gray-400 dark:bg-slate-400 rounded-full animate-bounce"
               style={{ animationDelay: `${i * 150}ms` }}
             />
           ))}

@@ -102,7 +102,7 @@ export default function AccountFormModal({ initial, onSave, onClose }) {
             onChange={e => field('type', e.target.value)}
           >
             {ACCOUNT_TYPES.map(t => (
-              <option key={t.value} value={t.value} className="bg-slate-800">
+              <option key={t.value} value={t.value}>
                 {t.label}
               </option>
             ))}

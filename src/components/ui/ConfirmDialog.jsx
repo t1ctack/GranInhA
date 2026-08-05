@@ -15,7 +15,7 @@ export default function ConfirmDialog({
       <div className="space-y-4">
         <div className="flex gap-3 p-4 bg-amber-500/10 rounded-xl border border-amber-500/20">
           <AlertTriangle size={18} className="text-amber-400 shrink-0 mt-0.5" />
-          <p className="text-sm text-slate-300 leading-relaxed">{description}</p>
+          <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed">{description}</p>
         </div>
 
         <div className="flex justify-end gap-2">

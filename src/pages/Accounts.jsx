@@ -7,15 +7,15 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import logoIcon from '@/assets/logo-icon.png'
 
 function SkeletonCard() {
-  return <div className="card h-32 animate-pulse bg-slate-800/60" />
+  return <div className="card h-32 animate-pulse bg-gray-100 dark:bg-slate-800/60 !p-0" />
 }
 
 export default function Accounts() {
   const { accounts, loading, addAccount, updateAccount, removeAccount } = useAccounts()
 
   const [showForm,      setShowForm]      = useState(false)
-  const [editing,       setEditing]       = useState(null)   // account being edited
-  const [pendingDelete, setPendingDelete] = useState(null)   // account awaiting deletion
+  const [editing,       setEditing]       = useState(null)
+  const [pendingDelete, setPendingDelete] = useState(null)
   const [deleteLoading, setDeleteLoading] = useState(false)
 
   function openCreate() { setEditing(null); setShowForm(true) }
@@ -46,8 +46,8 @@ export default function Accounts() {
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Contas</h1>
-          <p className="text-slate-400 text-sm mt-1">Porquinhos, cartões e carteiras</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Contas</h1>
+          <p className="text-gray-500 dark:text-slate-400 text-sm mt-1">Porquinhos, cartões e carteiras</p>
         </div>
         <button onClick={openCreate} className="btn-primary flex items-center gap-2">
           <Plus size={16} />
@@ -59,9 +59,7 @@ export default function Accounts() {
       {/* Content */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
+          <SkeletonCard /><SkeletonCard /><SkeletonCard />
         </div>
       ) : accounts.length === 0 ? (
         <EmptyState onCreateClick={openCreate} />
@@ -78,7 +76,6 @@ export default function Accounts() {
         </div>
       )}
 
-      {/* Create / Edit modal */}
       {showForm && (
         <AccountFormModal
           initial={editing}
@@ -87,7 +84,6 @@ export default function Accounts() {
         />
       )}
 
-      {/* Delete confirmation */}
       {pendingDelete && (
         <ConfirmDialog
           title="Excluir conta"
@@ -108,8 +104,8 @@ function EmptyState({ onCreateClick }) {
     <div className="card">
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <img src={logoIcon} alt="" className="h-20 w-auto mb-5 opacity-60 animate-float" />
-        <p className="font-medium text-slate-300">Nenhuma conta criada ainda</p>
-        <p className="text-sm text-slate-500 mt-1 mb-6 max-w-xs">
+        <p className="font-medium text-gray-700 dark:text-slate-300">Nenhuma conta criada ainda</p>
+        <p className="text-sm text-gray-400 dark:text-slate-500 mt-1 mb-6 max-w-xs">
           Crie porquinhos de poupança, cartões de crédito, carteiras ou contas correntes para começar a controlar suas finanças.
         </p>
         <button onClick={onCreateClick} className="btn-primary flex items-center gap-2">

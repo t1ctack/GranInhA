@@ -12,7 +12,7 @@ export default function Login() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-slate-950">
+      <div className="min-h-dvh flex items-center justify-center bg-gray-50 dark:bg-slate-950">
         <img src={logoIcon} alt="GranInhA" className="h-16 w-auto animate-float" />
       </div>
     )
@@ -37,38 +37,42 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center bg-slate-950 px-4">
+    <div className="min-h-dvh flex flex-col items-center justify-center bg-gray-50 dark:bg-slate-950 px-4">
       <div className="w-full max-w-sm flex flex-col items-center gap-8">
         {/* Logo */}
         <div className="flex flex-col items-center gap-5">
-          <img src={logoIcon} alt="GranInhA" className="h-24 w-auto animate-float drop-shadow-[0_0_24px_rgba(74,222,128,0.35)]" />
+          <img
+            src={logoIcon}
+            alt="GranInhA"
+            className="h-24 w-auto animate-float drop-shadow-[0_0_24px_rgba(74,222,128,0.35)]"
+          />
           <img src={logoFull} alt="GranInhA" className="h-10 w-auto" />
-          <p className="text-slate-400 text-sm text-center leading-relaxed">
+          <p className="text-gray-500 dark:text-slate-400 text-sm text-center leading-relaxed">
             Controle financeiro pessoal com porquinhos,<br />cartões e carteiras
           </p>
         </div>
 
         {/* Card */}
         <div className="card w-full flex flex-col gap-4">
-          <p className="text-sm text-slate-400 text-center">
+          <p className="text-sm text-gray-500 dark:text-slate-400 text-center">
             Entre para acessar suas contas
           </p>
 
           <button
             onClick={handleGoogle}
             disabled={busy}
-            className="flex items-center justify-center gap-3 w-full bg-white hover:bg-slate-100 text-slate-900 font-medium px-4 py-3 rounded-xl transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-3 w-full bg-white hover:bg-gray-50 dark:hover:bg-slate-100 text-gray-900 font-medium px-4 py-3 rounded-xl border border-gray-200 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <GoogleIcon />
             {busy ? 'Entrando…' : 'Entrar com Google'}
           </button>
 
           {error && (
-            <p className="text-red-400 text-xs text-center">{error}</p>
+            <p className="text-red-500 dark:text-red-400 text-xs text-center">{error}</p>
           )}
         </div>
 
-        <p className="text-slate-600 text-xs text-center">
+        <p className="text-gray-400 dark:text-slate-600 text-xs text-center">
           Seus dados ficam salvos de forma segura no Firebase.
         </p>
       </div>

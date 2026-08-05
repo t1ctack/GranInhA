@@ -43,8 +43,8 @@ export default function AccountCard({ account, onEdit, onDelete }) {
             {meta.emoji}
           </span>
           <div className="min-w-0">
-            <p className="font-semibold text-sm leading-snug truncate">{account.name}</p>
-            <p className="text-xs text-slate-400 mt-0.5">{meta.label}</p>
+            <p className="font-semibold text-sm leading-snug truncate text-gray-900 dark:text-slate-100">{account.name}</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">{meta.label}</p>
           </div>
         </div>
 
@@ -58,17 +58,17 @@ export default function AccountCard({ account, onEdit, onDelete }) {
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 top-8 z-20 bg-slate-800 border border-slate-700 rounded-xl shadow-xl w-36 overflow-hidden">
+            <div className="absolute right-0 top-8 z-20 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-xl w-36 overflow-hidden">
               <button
                 onClick={() => { setMenuOpen(false); onEdit(account) }}
-                className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm hover:bg-slate-700 transition-colors text-left"
+                className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-left"
               >
-                <Pencil size={14} className="text-slate-400" />
+                <Pencil size={14} className="text-gray-400 dark:text-slate-400" />
                 Editar
               </button>
               <button
                 onClick={() => { setMenuOpen(false); onDelete(account) }}
-                className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm hover:bg-red-500/10 text-red-400 transition-colors text-left"
+                className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm hover:bg-red-500/10 text-red-500 dark:text-red-400 transition-colors text-left"
               >
                 <Trash2 size={14} />
                 Excluir
@@ -80,8 +80,8 @@ export default function AccountCard({ account, onEdit, onDelete }) {
 
       {/* Balance */}
       <div>
-        <p className="text-xs text-slate-500 mb-0.5">Saldo atual</p>
-        <p className={`text-xl font-bold tabular-nums ${balance < 0 ? 'text-red-400' : 'text-slate-100'}`}>
+        <p className="text-xs text-gray-400 dark:text-slate-500 mb-0.5">Saldo atual</p>
+        <p className={`text-xl font-bold tabular-nums ${balance < 0 ? 'text-red-500 dark:text-red-400' : 'text-gray-900 dark:text-slate-100'}`}>
           {fmt.format(balance)}
         </p>
       </div>

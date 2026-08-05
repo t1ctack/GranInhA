@@ -9,7 +9,7 @@ import { groupByDay, formatCurrency } from '@/services/formatters'
 import logoIcon from '@/assets/logo-icon.png'
 
 function SkeletonRow() {
-  return <div className="h-14 rounded-xl animate-pulse bg-slate-800/60 my-1" />
+  return <div className="h-14 rounded-xl animate-pulse bg-gray-100 dark:bg-slate-800/60 my-1" />
 }
 
 export default function Transactions() {
@@ -39,8 +39,8 @@ export default function Transactions() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Extrato</h1>
-          <p className="text-slate-400 text-sm mt-1">Histórico de transações</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Extrato</h1>
+          <p className="text-gray-500 dark:text-slate-400 text-sm mt-1">Histórico de transações</p>
         </div>
         <button onClick={() => setShowForm(true)} className="btn-primary flex items-center gap-2">
           <Plus size={16} />
@@ -60,7 +60,7 @@ export default function Transactions() {
         <div className="space-y-4">
           {groups.map(({ label, items }) => (
             <div key={label} className="card">
-              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+              <h3 className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">
                 {label}
               </h3>
               {items.map(tx => (
@@ -105,8 +105,8 @@ function EmptyState({ onAdd }) {
     <div className="card">
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <img src={logoIcon} alt="" className="h-20 w-auto mb-5 opacity-60 animate-float" />
-        <p className="font-medium text-slate-300">Nenhuma transação ainda</p>
-        <p className="text-sm text-slate-500 mt-1 mb-6 max-w-xs">
+        <p className="font-medium text-gray-700 dark:text-slate-300">Nenhuma transação ainda</p>
+        <p className="text-sm text-gray-400 dark:text-slate-500 mt-1 mb-6 max-w-xs">
           Registre entradas e saídas manualmente ou use o chat com linguagem natural.
         </p>
         <button onClick={onAdd} className="btn-primary flex items-center gap-2">

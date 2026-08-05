@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#22c55e" />
     <meta name="description" content="GranInhA — controle financeiro pessoal com porquinhos, cartões e carteiras" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" href="/logo-icon.png" />
     <link rel="apple-touch-icon" href="/logo-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -12,6 +13,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <title>GranInhA</title>
+    <!-- Anti-FOUC: apply saved theme before first paint -->
+    <script>
+      (function () {
+        var t = localStorage.getItem('graninha-theme') ?? 'dark'
+        if (t !== 'light') document.documentElement.classList.add('dark')
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
