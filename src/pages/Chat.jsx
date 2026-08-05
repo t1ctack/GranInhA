@@ -150,13 +150,14 @@ export default function Chat() {
 
   // ── Execute confirmed transaction ──────────────────────────────────────────
 
-  async function doExecute(type, account, amount, originalText) {
+  async function doExecute(type, account, amount, originalText, category) {
     const created = await createTransaction({
       type,
       accountId:   account.id,
       amount,
       description: originalText,
       date:        new Date().toISOString(),
+      category,
     })
     lastChatTxRef.current = created
 
@@ -175,8 +176,8 @@ export default function Chat() {
     // ── Stage: awaiting confirmation ────────────────────────────────────────
     if (pendingCmd?.stage === 'confirm') {
       if (YES.test(normText)) {
-        const { type, account, amount, originalText } = pendingCmd
-        const reply = await doExecute(type, account, amount, originalText)
+        const { type, account, amount, originalText, category } = pendingCmd
+        const reply = await doExecute(type, account, amount, originalText, category)
         setPendingCmd(null)
         return reply
       }
@@ -193,7 +194,8 @@ export default function Chat() {
       const { match, multiple, candidates } = findAccount(accounts, text)
       if (match) {
         const next = { stage: 'confirm', type: pendingCmd.type, account: match,
-                       amount: pendingCmd.amount, originalText: pendingCmd.originalText }
+                       amount: pendingCmd.amount, originalText: pendingCmd.originalText,
+                       category: pendingCmd.category }
         setPendingCmd(next)
         return confirmText(next)
       }
@@ -236,11 +238,11 @@ export default function Chat() {
       if (!cmd.accountName) {
         if (accounts.length === 1) {
           const next = { stage: 'confirm', type, account: accounts[0],
-                         amount: cmd.amount, originalText: text }
+                         amount: cmd.amount, originalText: text, category: cmd.category }
           setPendingCmd(next)
           return confirmText(next)
         }
-        setPendingCmd({ stage: 'account', type, amount: cmd.amount, originalText: text })
+        setPendingCmd({ stage: 'account', type, amount: cmd.amount, originalText: text, category: cmd.category })
         return askAccountText(accounts)
       }
 
@@ -248,13 +250,13 @@ export default function Chat() {
       const { match, multiple, candidates } = findAccount(accounts, cmd.accountName)
       if (!match && !multiple) return noAccountText(cmd.accountName, accounts)
       if (multiple) {
-        setPendingCmd({ stage: 'account', type, amount: cmd.amount, originalText: text })
+        setPendingCmd({ stage: 'account', type, amount: cmd.amount, originalText: text, category: cmd.category })
         return ambiguousText(candidates)
       }
 
       // Single match — ask confirmation
       const next = { stage: 'confirm', type, account: match,
-                     amount: cmd.amount, originalText: text }
+                     amount: cmd.amount, originalText: text, category: cmd.category }
       setPendingCmd(next)
       return confirmText(next)
     }

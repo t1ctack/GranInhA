@@ -13,6 +13,7 @@ import {
 import { db } from '@/services/firebase'
 import { useAuth } from '@/contexts/AuthContext'
 import { isCurrentMonth } from '@/services/formatters'
+import { DEFAULT_CATEGORY_ID } from '@/constants/categories'
 
 function txsRef(uid) {
   return collection(db, 'users', uid, 'transactions')
@@ -40,10 +41,11 @@ export function useTransactions(maxItems = 200) {
 
   /** Atomically writes the transaction and updates the account balance.
    *  Returns the minimal tx object needed for undo: { id, type, accountId, amount } */
-  async function createTransaction({ type, accountId, amount, description, date }) {
+  async function createTransaction({ type, accountId, amount, description, date, category }) {
     const newTxRef  = doc(txsRef(user.uid))
     const accRef    = accountDocRef(user.uid, accountId)
     const delta     = type === 'income' ? amount : -amount
+    const cat       = category ?? DEFAULT_CATEGORY_ID
 
     await runTransaction(db, async (t) => {
       const accSnap = await t.get(accRef)
@@ -56,11 +58,12 @@ export function useTransactions(maxItems = 200) {
         amount,
         description: description?.trim() ?? '',
         date: Timestamp.fromDate(new Date(date)),
+        category: cat,
         createdAt: serverTimestamp(),
       })
     })
 
-    return { id: newTxRef.id, type, accountId, amount }
+    return { id: newTxRef.id, type, accountId, amount, category: cat }
   }
 
   /** Atomically reverses the balance change and removes the transaction */

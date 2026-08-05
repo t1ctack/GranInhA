@@ -1,5 +1,27 @@
 // Natural language command parser — v2
 
+// ─── Category keyword inference (normalized — no accents) ────────────────────
+const CATEGORY_KEYWORDS = {
+  alimentacao: ['mercado','supermercado','ifood','restaurante','lanche','lanchonete','comida','padaria','acougue','feira','pizza','delivery'],
+  transporte:  ['uber','99','taxi','gasolina','combustivel','onibus','metro','estacionamento','pedagio','carro','moto'],
+  moradia:     ['aluguel','condominio','luz','energia','agua','internet','gas','iptu'],
+  educacao:    ['curso','faculdade','escola','livro','mensalidade','matricula'],
+  saude:       ['farmacia','remedio','medico','consulta','plano de saude','academia','dentista'],
+  salario:     ['salario','holerite','pagamento','freela','freelance','13o','decimo terceiro'],
+  lazer:       ['cinema','netflix','spotify','jogo','bar','show','viagem','streaming','balada'],
+  compras:     ['shopping','loja','roupa','amazon','mercado livre','shopee'],
+}
+
+/** Fuzzy-free substring match of category keywords against the full command text. */
+export function inferCategory(text) {
+  const n = normalize(text)
+  if (!n) return 'outros'
+  for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+    if (keywords.some(kw => n.includes(kw))) return category
+  }
+  return 'outros'
+}
+
 // ─── Type labels (normalized — no accents) ───────────────────────────────────
 const TYPE_LABELS = {
   piggy:       'porquinho',
@@ -196,8 +218,9 @@ export function parseCommand(text) {
   if (action === 'undo') return { action: 'undo' }
 
   if (action === 'add' || action === 'deduct') {
-    const rest = t.slice(words[0].length).trim()
-    const amt  = extractAmount(rest)
+    const rest     = t.slice(words[0].length).trim()
+    const amt      = extractAmount(rest)
+    const category = inferCategory(t)
 
     if (amt) {
       const beforeAmt = rest.slice(0, amt.start).trim()
@@ -206,19 +229,19 @@ export function parseCommand(text) {
       // Standard order: [verb] [amount] [prep] [account] [desc?]
       const stdAcc = parseAccountFromText(afterAmt)
       if (stdAcc.found) {
-        return { action, amount: amt.value, accountName: stdAcc.accountName, description: stdAcc.description }
+        return { action, amount: amt.value, accountName: stdAcc.accountName, description: stdAcc.description, category }
       }
 
       // Alt order: [verb] [prep] [account] [amount]
       if (beforeAmt) {
         const altAcc = parseAccountFromText(beforeAmt)
         if (altAcc.found) {
-          return { action, amount: amt.value, accountName: altAcc.accountName, description: null }
+          return { action, amount: amt.value, accountName: altAcc.accountName, description: null, category }
         }
       }
 
       // No account preposition found — amount only
-      return { action, amount: amt.value, accountName: null, description: null }
+      return { action, amount: amt.value, accountName: null, description: null, category }
     }
 
     // Verb recognized but no amount — try to salvage account name

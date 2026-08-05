@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { TrendingUp, TrendingDown } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import { toDatetimeLocal, parseBRL } from '@/services/formatters'
+import { CATEGORIES, DEFAULT_CATEGORY_ID } from '@/constants/categories'
 
 export default function TransactionFormModal({ accounts, onSave, onClose }) {
   const [form, setForm] = useState({
@@ -10,6 +11,7 @@ export default function TransactionFormModal({ accounts, onSave, onClose }) {
     amount:      '',
     description: '',
     date:        toDatetimeLocal(),
+    category:    DEFAULT_CATEGORY_ID,
   })
   const [errs, setErrs]     = useState({})
   const [saving, setSaving] = useState(false)
@@ -39,6 +41,7 @@ export default function TransactionFormModal({ accounts, onSave, onClose }) {
         amount:      parseBRL(form.amount),
         description: form.description.trim(),
         date:        form.date,
+        category:    form.category,
       })
       onClose()
     } catch (err) {
@@ -132,6 +135,35 @@ export default function TransactionFormModal({ accounts, onSave, onClose }) {
             onChange={e => field('description', e.target.value)}
             maxLength={120}
           />
+        </div>
+
+        {/* Category */}
+        <div>
+          <label className="block text-sm text-slate-400 mb-1.5">
+            Categoria <span className="text-slate-600">(opcional)</span>
+          </label>
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
+            {CATEGORIES.map(cat => {
+              const active = form.category === cat.id
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => field('category', cat.id)}
+                  aria-pressed={active}
+                  className={`flex flex-col items-center gap-1 py-2 rounded-xl text-[11px] font-medium transition-all duration-150 border ${
+                    active
+                      ? 'border-transparent text-white shadow-md'
+                      : 'border-gray-200 dark:border-dm-border text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-dm-hover'
+                  }`}
+                  style={active ? { backgroundColor: cat.color } : undefined}
+                >
+                  <span className="text-base leading-none">{cat.emoji}</span>
+                  <span className="truncate max-w-full">{cat.label}</span>
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         {/* Date */}
