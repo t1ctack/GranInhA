@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, Trash2 } from 'lucide-react'
+﻿import { TrendingUp, TrendingDown, Trash2 } from 'lucide-react'
 import { formatCurrency, formatTime } from '@/services/formatters'
 
 const ACCOUNT_EMOJI = {
@@ -15,7 +15,7 @@ export default function TransactionItem({ tx, account, onDelete }) {
   const accountEmoji = ACCOUNT_EMOJI[account?.type] ?? '💰'
 
   return (
-    <div className="flex items-center gap-3 py-3 border-b border-gray-100 dark:border-dark-border/60 last:border-0">
+    <div className="flex items-center gap-3 py-3 border-b border-gray-100 dark:border-dm-border/60 last:border-0">
       {/* Direction icon */}
       <div className={`p-2 rounded-xl shrink-0 ${isIncome ? 'bg-emerald-500/10' : 'bg-red-500/10'}`}>
         {isIncome

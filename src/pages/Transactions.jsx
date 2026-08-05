@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useTransactions } from '@/hooks/useTransactions'
 import { useAccounts } from '@/hooks/useAccounts'
@@ -9,7 +9,7 @@ import { groupByDay, formatCurrency } from '@/services/formatters'
 import logoIcon from '@/assets/logo-icon.png'
 
 function SkeletonRow() {
-  return <div className="h-14 rounded-xl animate-pulse bg-gray-100 dark:bg-dark-muted/60 my-1" />
+  return <div className="h-14 rounded-xl animate-pulse bg-gray-100 dark:bg-dm-muted/60 my-1" />
 }
 
 export default function Transactions() {

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import logoFull from '@/assets/logo-full.png'
@@ -12,7 +12,7 @@ export default function Login() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-gray-50 dark:bg-dark-bg">
+      <div className="min-h-dvh flex items-center justify-center bg-gray-50 dark:bg-dm-bg">
         <img src={logoIcon} alt="GranInhA" className="h-16 w-auto animate-float" />
       </div>
     )
@@ -37,7 +37,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center bg-gray-50 dark:bg-dark-bg px-4">
+    <div className="min-h-dvh flex flex-col items-center justify-center bg-gray-50 dark:bg-dm-bg px-4">
       <div className="w-full max-w-sm flex flex-col items-center gap-8">
         {/* Logo */}
         <div className="flex flex-col items-center gap-5">

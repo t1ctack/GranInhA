@@ -18,7 +18,7 @@ export default {
           900: '#14532d',
           950: '#052e16',
         },
-        dark: {
+        dm: {
           bg:      '#0A0A0A',
           surface: '#141414',
           muted:   '#1C1C1C',

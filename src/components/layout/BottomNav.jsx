@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+﻿import { NavLink } from 'react-router-dom'
 import { PiggyBank, LayoutDashboard, ArrowLeftRight, MessageSquare } from 'lucide-react'
 
 const navItems = [
@@ -10,7 +10,7 @@ const navItems = [
 
 export default function BottomNav() {
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-dark-surface border-t border-gray-200 dark:border-dark-border flex z-50">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-dm-surface border-t border-gray-200 dark:border-dm-border flex z-50">
       {navItems.map(({ to, icon: Icon, label }) => (
         <NavLink
           key={to}

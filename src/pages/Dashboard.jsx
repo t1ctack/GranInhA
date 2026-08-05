@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { TrendingUp, TrendingDown, Wallet, Plus, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useAccounts } from '@/hooks/useAccounts'
@@ -11,7 +11,7 @@ import { TYPE_META } from '@/components/accounts/AccountCard'
 import logoIcon from '@/assets/logo-icon.png'
 
 function SkeletonCard() {
-  return <div className="card h-20 animate-pulse bg-gray-100 dark:bg-dark-muted/60 !p-0" />
+  return <div className="card h-20 animate-pulse bg-gray-100 dark:bg-dm-muted/60 !p-0" />
 }
 
 export default function Dashboard() {
@@ -82,7 +82,7 @@ export default function Dashboard() {
 
         {loadingAccounts ? (
           <div className="space-y-2">
-            {[1, 2].map(i => <div key={i} className="h-12 rounded-xl animate-pulse bg-gray-100 dark:bg-dark-muted/60" />)}
+            {[1, 2].map(i => <div key={i} className="h-12 rounded-xl animate-pulse bg-gray-100 dark:bg-dm-muted/60" />)}
           </div>
         ) : accounts.length === 0 ? (
           <div className="flex flex-col items-center py-8 text-gray-400 dark:text-slate-500">
@@ -97,7 +97,7 @@ export default function Dashboard() {
             {accounts.slice(0, 4).map(acc => {
               const meta = TYPE_META[acc.type] ?? TYPE_META.other
               return (
-                <div key={acc.id} className="flex items-center justify-between py-2 px-3 rounded-xl hover:bg-gray-50 dark:hover:bg-dark-muted/60 transition-colors">
+                <div key={acc.id} className="flex items-center justify-between py-2 px-3 rounded-xl hover:bg-gray-50 dark:hover:bg-dm-muted/60 transition-colors">
                   <div className="flex items-center gap-3">
                     <span
                       className="w-8 h-8 rounded-lg flex items-center justify-center text-base"
@@ -136,7 +136,7 @@ export default function Dashboard() {
 
         {loadingTxs ? (
           <div className="space-y-1 mt-2">
-            {[1, 2, 3].map(i => <div key={i} className="h-14 rounded-xl animate-pulse bg-gray-100 dark:bg-dark-muted/60" />)}
+            {[1, 2, 3].map(i => <div key={i} className="h-14 rounded-xl animate-pulse bg-gray-100 dark:bg-dm-muted/60" />)}
           </div>
         ) : recentTxs.length === 0 ? (
           <div className="flex flex-col items-center py-8 text-gray-400 dark:text-slate-500">
