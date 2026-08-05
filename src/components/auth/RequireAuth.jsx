@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import logoIcon from '@/assets/logo-icon.png'
 
 export default function RequireAuth({ children }) {
   const { user, loading } = useAuth()
@@ -8,7 +9,7 @@ export default function RequireAuth({ children }) {
   if (loading) {
     return (
       <div className="min-h-dvh flex items-center justify-center bg-slate-950">
-        <span className="text-5xl animate-bounce">🐷</span>
+        <img src={logoIcon} alt="GranInhA" className="h-16 w-auto animate-float" />
       </div>
     )
   }

@@ -8,6 +8,7 @@ import TransactionFormModal from '@/components/transactions/TransactionFormModal
 import TransactionItem from '@/components/transactions/TransactionItem'
 import { formatCurrency } from '@/services/formatters'
 import { TYPE_META } from '@/components/accounts/AccountCard'
+import logoIcon from '@/assets/logo-icon.png'
 
 function SkeletonCard() {
   return <div className="card h-20 animate-pulse bg-slate-800/60" />
@@ -85,7 +86,7 @@ export default function Dashboard() {
           </div>
         ) : accounts.length === 0 ? (
           <div className="flex flex-col items-center py-8 text-slate-500">
-            <span className="text-4xl mb-2">🐷</span>
+            <img src={logoIcon} alt="" className="h-14 w-auto mb-2 opacity-50 animate-float" />
             <p className="text-sm">Nenhuma conta ainda.</p>
             <Link to="/accounts" className="text-xs text-brand-400 hover:text-brand-300 mt-1 transition-colors">
               Criar minha primeira conta →
@@ -100,7 +101,7 @@ export default function Dashboard() {
                   <div className="flex items-center gap-3">
                     <span
                       className="w-8 h-8 rounded-lg flex items-center justify-center text-base"
-                      style={{ backgroundColor: `${acc.color ?? '#6366f1'}22` }}
+                      style={{ backgroundColor: `${acc.color ?? '#22c55e'}22` }}
                     >
                       {meta.emoji}
                     </span>
@@ -139,7 +140,7 @@ export default function Dashboard() {
           </div>
         ) : recentTxs.length === 0 ? (
           <div className="flex flex-col items-center py-8 text-slate-500">
-            <span className="text-4xl mb-2">📋</span>
+            <img src={logoIcon} alt="" className="h-14 w-auto mb-2 opacity-50 animate-float" />
             <p className="text-sm">Nenhuma transação registrada.</p>
             <button onClick={() => setShowForm(true)} className="text-xs text-brand-400 hover:text-brand-300 mt-1 transition-colors">
               Registrar primeira transação →

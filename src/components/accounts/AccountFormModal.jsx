@@ -31,7 +31,7 @@ export default function AccountFormModal({ initial, onSave, onClose }) {
   const [form, setForm] = useState({
     name:    initial?.name  ?? '',
     type:    initial?.type  ?? 'piggy',
-    color:   initial?.color ?? '#6366f1',
+    color:   initial?.color ?? '#22c55e',
     balance: '',             // only shown on create
   })
   const [errors, setSaving_] = useState({})  // reused for errors + saving below

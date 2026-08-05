@@ -17,7 +17,7 @@ export default function AccountCard({ account, onEdit, onDelete }) {
 
   const meta    = TYPE_META[account.type] ?? TYPE_META.other
   const balance = account.balance ?? 0
-  const color   = account.color ?? '#6366f1'
+  const color   = account.color ?? '#22c55e'
 
   useEffect(() => {
     if (!menuOpen) return

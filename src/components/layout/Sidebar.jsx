@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { PiggyBank, LayoutDashboard, ArrowLeftRight, MessageSquare, LogOut } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import logoFull from '@/assets/logo-full.png'
 
 const navItems = [
   { to: '/',             icon: LayoutDashboard, label: 'Início' },
@@ -14,9 +15,8 @@ export default function Sidebar() {
 
   return (
     <aside className="hidden md:flex flex-col w-60 bg-slate-900 border-r border-slate-800 p-4 gap-2 shrink-0">
-      <div className="flex items-center gap-2 px-2 py-3 mb-4">
-        <span className="text-2xl">🐷</span>
-        <span className="text-xl font-bold tracking-tight text-brand-400">GranInhA</span>
+      <div className="px-2 py-3 mb-4">
+        <img src={logoFull} alt="GranInhA" className="h-9 w-auto" />
       </div>
 
       <nav className="flex-1 space-y-1">
@@ -43,7 +43,7 @@ export default function Sidebar() {
         {user && (
           <div className="flex items-center gap-3 px-3 py-2">
             <img
-              src={user.photoURL ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName ?? 'U')}&background=4f46e5&color=fff`}
+              src={user.photoURL ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName ?? 'U')}&background=16a34a&color=fff`}
               alt={user.displayName ?? 'avatar'}
               className="w-7 h-7 rounded-full shrink-0"
             />

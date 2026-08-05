@@ -4,6 +4,7 @@ import { useAccounts } from '@/hooks/useAccounts'
 import AccountCard from '@/components/accounts/AccountCard'
 import AccountFormModal from '@/components/accounts/AccountFormModal'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
+import logoIcon from '@/assets/logo-icon.png'
 
 function SkeletonCard() {
   return <div className="card h-32 animate-pulse bg-slate-800/60" />
@@ -106,7 +107,7 @@ function EmptyState({ onCreateClick }) {
   return (
     <div className="card">
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <span className="text-6xl mb-4">🐷</span>
+        <img src={logoIcon} alt="" className="h-20 w-auto mb-5 opacity-60 animate-float" />
         <p className="font-medium text-slate-300">Nenhuma conta criada ainda</p>
         <p className="text-sm text-slate-500 mt-1 mb-6 max-w-xs">
           Crie porquinhos de poupança, cartões de crédito, carteiras ou contas correntes para começar a controlar suas finanças.

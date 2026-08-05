@@ -302,7 +302,7 @@ export default function Chat() {
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-7rem)] md:h-[calc(100dvh-3rem)] animate-fade-in">
+    <div className="flex flex-col h-[calc(100dvh-9.5rem)] md:h-[calc(100dvh-3rem)] animate-fade-in">
       {/* Header */}
       <div className="mb-4 shrink-0">
         <h1 className="text-2xl font-bold">Chat</h1>

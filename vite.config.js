@@ -12,8 +12,8 @@ export default defineConfig({
         name: 'GranInhA',
         short_name: 'GranInhA',
         description: 'Controle financeiro pessoal com porquinhos, cartões e carteiras',
-        theme_color: '#6366f1',
-        background_color: '#0f172a',
+        theme_color: '#22c55e',
+        background_color: '#0a0f0a',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',
@@ -38,6 +38,7 @@ export default defineConfig({
         ],
       },
       workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         runtimeCaching: [
           {

@@ -6,6 +6,7 @@ import TransactionFormModal from '@/components/transactions/TransactionFormModal
 import TransactionItem from '@/components/transactions/TransactionItem'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import { groupByDay, formatCurrency } from '@/services/formatters'
+import logoIcon from '@/assets/logo-icon.png'
 
 function SkeletonRow() {
   return <div className="h-14 rounded-xl animate-pulse bg-slate-800/60 my-1" />
@@ -103,7 +104,7 @@ function EmptyState({ onAdd }) {
   return (
     <div className="card">
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <span className="text-6xl mb-4">📋</span>
+        <img src={logoIcon} alt="" className="h-20 w-auto mb-5 opacity-60 animate-float" />
         <p className="font-medium text-slate-300">Nenhuma transação ainda</p>
         <p className="text-sm text-slate-500 mt-1 mb-6 max-w-xs">
           Registre entradas e saídas manualmente ou use o chat com linguagem natural.

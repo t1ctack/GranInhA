@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import logoFull from '@/assets/logo-full.png'
+import logoIcon from '@/assets/logo-icon.png'
 
 export default function Login() {
   const { user, loading, signInWithGoogle } = useAuth()
@@ -8,16 +10,14 @@ export default function Login() {
   const [error, setError] = useState(null)
   const [busy, setBusy]   = useState(false)
 
-  // Aguarda o Firebase confirmar o estado antes de decidir o que mostrar
   if (loading) {
     return (
       <div className="min-h-dvh flex items-center justify-center bg-slate-950">
-        <span className="text-5xl animate-bounce">🐷</span>
+        <img src={logoIcon} alt="GranInhA" className="h-16 w-auto animate-float" />
       </div>
     )
   }
 
-  // Já autenticado → manda direto para home
   if (user) {
     return <Navigate to="/" replace />
   }
@@ -39,14 +39,16 @@ export default function Login() {
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center bg-slate-950 px-4">
       <div className="w-full max-w-sm flex flex-col items-center gap-8">
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-7xl">🐷</span>
-          <h1 className="text-3xl font-bold tracking-tight text-brand-400">GranInhA</h1>
-          <p className="text-slate-400 text-sm text-center">
+        {/* Logo */}
+        <div className="flex flex-col items-center gap-5">
+          <img src={logoIcon} alt="GranInhA" className="h-24 w-auto animate-float drop-shadow-[0_0_24px_rgba(74,222,128,0.35)]" />
+          <img src={logoFull} alt="GranInhA" className="h-10 w-auto" />
+          <p className="text-slate-400 text-sm text-center leading-relaxed">
             Controle financeiro pessoal com porquinhos,<br />cartões e carteiras
           </p>
         </div>
 
+        {/* Card */}
         <div className="card w-full flex flex-col gap-4">
           <p className="text-sm text-slate-400 text-center">
             Entre para acessar suas contas
