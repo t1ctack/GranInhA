@@ -6,6 +6,8 @@ import { useTransactions } from '@/hooks/useTransactions'
 import { useAuth } from '@/contexts/AuthContext'
 import TransactionFormModal from '@/components/transactions/TransactionFormModal'
 import TransactionItem from '@/components/transactions/TransactionItem'
+import BalanceEvolutionChart from '@/components/dashboard/BalanceEvolutionChart'
+import ExpensesByAccountChart from '@/components/dashboard/ExpensesByAccountChart'
 import { formatCurrency } from '@/services/formatters'
 import { TYPE_META } from '@/components/accounts/AccountCard'
 import logoIcon from '@/assets/logo-icon-cropped.png'
@@ -70,6 +72,12 @@ export default function Dashboard() {
           />
         </div>
       )}
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <BalanceEvolutionChart transactions={transactions} loading={loadingTxs} />
+        <ExpensesByAccountChart transactions={transactions} accounts={accounts} loading={loadingTxs || loadingAccounts} />
+      </div>
 
       {/* Accounts */}
       <div className="card">
