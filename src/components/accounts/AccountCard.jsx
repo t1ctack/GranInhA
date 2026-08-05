@@ -58,10 +58,10 @@ export default function AccountCard({ account, onEdit, onDelete }) {
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 top-8 z-20 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-xl w-36 overflow-hidden">
+            <div className="absolute right-0 top-8 z-20 bg-white dark:bg-dark-muted border border-gray-200 dark:border-dark-border rounded-xl shadow-xl w-36 overflow-hidden">
               <button
                 onClick={() => { setMenuOpen(false); onEdit(account) }}
-                className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-left"
+                className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-dark-hover transition-colors text-left"
               >
                 <Pencil size={14} className="text-gray-400 dark:text-slate-400" />
                 Editar

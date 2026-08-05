@@ -18,6 +18,13 @@ export default {
           900: '#14532d',
           950: '#052e16',
         },
+        dark: {
+          bg:      '#0A0A0A',
+          surface: '#141414',
+          muted:   '#1C1C1C',
+          border:  '#262626',
+          hover:   '#222222',
+        },
       },
       fontFamily: {
         sans: ['Space Grotesk', 'system-ui', 'sans-serif'],

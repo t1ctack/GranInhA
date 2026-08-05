@@ -9,7 +9,7 @@ import { groupByDay, formatCurrency } from '@/services/formatters'
 import logoIcon from '@/assets/logo-icon.png'
 
 function SkeletonRow() {
-  return <div className="h-14 rounded-xl animate-pulse bg-gray-100 dark:bg-slate-800/60 my-1" />
+  return <div className="h-14 rounded-xl animate-pulse bg-gray-100 dark:bg-dark-muted/60 my-1" />
 }
 
 export default function Transactions() {

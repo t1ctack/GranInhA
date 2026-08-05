@@ -7,7 +7,7 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import logoIcon from '@/assets/logo-icon.png'
 
 function SkeletonCard() {
-  return <div className="card h-32 animate-pulse bg-gray-100 dark:bg-slate-800/60 !p-0" />
+  return <div className="card h-32 animate-pulse bg-gray-100 dark:bg-dark-muted/60 !p-0" />
 }
 
 export default function Accounts() {

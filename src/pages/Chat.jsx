@@ -316,7 +316,7 @@ export default function Chat() {
             {[0, 1, 2].map(i => (
               <span
                 key={i}
-                className="w-2 h-2 bg-gray-300 dark:bg-slate-600 rounded-full animate-bounce"
+                className="w-2 h-2 bg-gray-300 dark:bg-gray-500 rounded-full animate-bounce"
                 style={{ animationDelay: `${i * 150}ms` }}
               />
             ))}
@@ -344,7 +344,7 @@ export default function Chat() {
                   key={cmd}
                   onClick={() => handleSend(cmd)}
                   disabled={thinking || messages === null}
-                  className="text-xs bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 disabled:opacity-40 text-gray-600 dark:text-slate-300 px-3 py-1.5 rounded-full transition-colors"
+                  className="text-xs bg-gray-100 dark:bg-dark-muted hover:bg-gray-200 dark:hover:bg-dark-hover disabled:opacity-40 text-gray-600 dark:text-slate-300 px-3 py-1.5 rounded-full transition-colors"
                 >
                   {cmd}
                 </button>
@@ -398,7 +398,7 @@ function MessageBubble({ msg }) {
           className={`rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap leading-relaxed ${
             isUser
               ? 'bg-brand-600 text-white rounded-tr-sm'
-              : 'bg-gray-100 dark:bg-slate-800 text-gray-900 dark:text-slate-100 rounded-tl-sm'
+              : 'bg-gray-100 dark:bg-dark-muted text-gray-900 dark:text-slate-100 rounded-tl-sm'
           }`}
         >
           {msg.text}
@@ -417,12 +417,12 @@ function ThinkingBubble() {
       <div className="bg-brand-600/20 rounded-full p-1.5 h-8 w-8 flex items-center justify-center shrink-0">
         <Bot size={15} className="text-brand-400" />
       </div>
-      <div className="bg-gray-100 dark:bg-slate-800 rounded-2xl rounded-tl-sm px-4 py-3.5">
+      <div className="bg-gray-100 dark:bg-dark-muted rounded-2xl rounded-tl-sm px-4 py-3.5">
         <div className="flex gap-1.5 items-center">
           {[0, 1, 2].map(i => (
             <span
               key={i}
-              className="w-1.5 h-1.5 bg-gray-400 dark:bg-slate-400 rounded-full animate-bounce"
+              className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-400 rounded-full animate-bounce"
               style={{ animationDelay: `${i * 150}ms` }}
             />
           ))}

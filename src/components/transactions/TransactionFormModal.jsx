@@ -57,7 +57,7 @@ export default function TransactionFormModal({ accounts, onSave, onClose }) {
         {/* Type toggle */}
         <div>
           <label className="block text-sm text-slate-400 mb-1.5">Tipo</label>
-          <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 dark:bg-slate-800 rounded-xl">
+          <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 dark:bg-dark-muted rounded-xl">
             {[
               { value: 'expense', label: 'Saída',   Icon: TrendingDown, activeClass: 'bg-red-600 text-white shadow-md' },
               { value: 'income',  label: 'Entrada',  Icon: TrendingUp,   activeClass: 'bg-emerald-600 text-white shadow-md' },

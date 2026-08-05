@@ -12,7 +12,7 @@ export default function Login() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-gray-50 dark:bg-slate-950">
+      <div className="min-h-dvh flex items-center justify-center bg-gray-50 dark:bg-dark-bg">
         <img src={logoIcon} alt="GranInhA" className="h-16 w-auto animate-float" />
       </div>
     )
@@ -37,7 +37,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center bg-gray-50 dark:bg-slate-950 px-4">
+    <div className="min-h-dvh flex flex-col items-center justify-center bg-gray-50 dark:bg-dark-bg px-4">
       <div className="w-full max-w-sm flex flex-col items-center gap-8">
         {/* Logo */}
         <div className="flex flex-col items-center gap-5">
