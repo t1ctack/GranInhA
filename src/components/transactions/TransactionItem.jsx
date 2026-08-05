@@ -1,4 +1,4 @@
-﻿import { TrendingUp, TrendingDown, Trash2 } from 'lucide-react'
+import { TrendingUp, TrendingDown, Trash2 } from 'lucide-react'
 import { formatCurrency, formatTime } from '@/services/formatters'
 
 const ACCOUNT_EMOJI = {

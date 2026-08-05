@@ -1,4 +1,4 @@
-﻿import { NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { PiggyBank, LayoutDashboard, ArrowLeftRight, MessageSquare } from 'lucide-react'
 
 const navItems = [

@@ -1,4 +1,4 @@
-﻿import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { Sun, Moon } from 'lucide-react'
 import Sidebar from './Sidebar'
 import BottomNav from './BottomNav'

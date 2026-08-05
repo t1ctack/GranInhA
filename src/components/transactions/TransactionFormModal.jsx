@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { TrendingUp, TrendingDown } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import { toDatetimeLocal, parseBRL } from '@/services/formatters'

@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useAccounts } from '@/hooks/useAccounts'
 import AccountCard from '@/components/accounts/AccountCard'

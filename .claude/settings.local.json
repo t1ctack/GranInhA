@@ -3,7 +3,11 @@
     "allow": [
       "Bash(git -C /c/Projetos/graninha log --oneline -5)",
       "Bash(git -C /c/Projetos/graninha add .)",
-      "Bash(git -C /c/Projetos/graninha status --short)"
+      "Bash(git -C /c/Projetos/graninha status --short)",
+      "Bash(npm run *)",
+      "Bash(python3 *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }

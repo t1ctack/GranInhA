@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { TrendingUp, TrendingDown, Wallet, Plus, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useAccounts } from '@/hooks/useAccounts'
