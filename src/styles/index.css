@@ -4,12 +4,21 @@
 
 @layer base {
   * {
-    @apply border-gray-200 dark:border-dm-border;
+    @apply border-gray-200;
+  }
+
+  .dark * {
+    border-color: #262626;
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 dark:bg-dm-bg dark:text-slate-100 font-sans antialiased;
+    @apply bg-gray-50 text-gray-900 font-sans antialiased;
     transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .dark body {
+    background-color: #0A0A0A;
+    color: #f1f5f9;
   }
 
   ::-webkit-scrollbar {
@@ -17,11 +26,19 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100 dark:bg-dm-surface;
+    @apply bg-gray-100;
+  }
+
+  .dark ::-webkit-scrollbar-track {
+    background-color: #141414;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+    @apply bg-gray-300 rounded-full;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
   }
 }
 
@@ -37,7 +54,12 @@
 
 @layer components {
   .card {
-    @apply bg-white dark:bg-dm-surface rounded-2xl border border-gray-200 dark:border-dm-border p-4;
+    @apply bg-white rounded-2xl border border-gray-200 p-4;
+  }
+
+  .dark .card {
+    background-color: #141414;
+    border-color: #262626;
   }
 
   .btn-primary {
@@ -45,18 +67,45 @@
   }
 
   .btn-ghost {
-    @apply text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 hover:bg-gray-100 dark:hover:bg-dm-muted px-3 py-2 rounded-xl transition-colors duration-150;
+    @apply text-gray-500 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-xl transition-colors duration-150;
+  }
+
+  .dark .btn-ghost {
+    color: #94a3b8;
+  }
+
+  .dark .btn-ghost:hover {
+    color: #f1f5f9;
+    background-color: #1C1C1C;
   }
 
   .input {
-    @apply bg-gray-100 dark:bg-dm-muted border border-gray-300 dark:border-dm-border text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 rounded-xl px-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-150;
+    @apply bg-gray-100 border border-gray-300 text-gray-900 placeholder-gray-400 rounded-xl px-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-150;
+  }
+
+  .dark .input {
+    background-color: #1C1C1C;
+    border-color: #262626;
+    color: #f1f5f9;
+  }
+
+  .dark .input::placeholder {
+    color: #64748b;
   }
 
   .badge-income {
-    @apply bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-medium px-2 py-0.5 rounded-full;
+    @apply bg-emerald-500/10 text-emerald-600 text-xs font-medium px-2 py-0.5 rounded-full;
+  }
+
+  .dark .badge-income {
+    color: #34d399;
   }
 
   .badge-expense {
-    @apply bg-red-500/10 text-red-600 dark:text-red-400 text-xs font-medium px-2 py-0.5 rounded-full;
+    @apply bg-red-500/10 text-red-600 text-xs font-medium px-2 py-0.5 rounded-full;
+  }
+
+  .dark .badge-expense {
+    color: #f87171;
   }
 }
