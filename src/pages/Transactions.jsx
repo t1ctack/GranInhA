@@ -138,7 +138,7 @@ export default function Transactions() {
           <div ref={menuRef} className="relative shrink-0">
             <button
               onClick={() => setMenuOpen(v => !v)}
-              className="btn-ghost !p-2.5"
+              className="btn-ghost w-11 h-11 flex items-center justify-center"
               aria-label="Opções do extrato"
             >
               <MoreVertical size={18} />
@@ -363,7 +363,7 @@ function ActiveChip({ label, onRemove }) {
       <button
         onClick={onRemove}
         aria-label={`Remover filtro: ${label}`}
-        className="hover:bg-brand-600/20 rounded-full p-0.5 transition-colors"
+        className="relative hover:bg-brand-600/20 rounded-full p-0.5 transition-colors before:absolute before:-inset-3.5 before:content-['']"
       >
         <X size={12} />
       </button>

@@ -49,7 +49,7 @@ export default function ChallengeCard({ challenge, account, onDelete }) {
         <div ref={menuRef} className="relative shrink-0">
           <button
             onClick={() => setMenuOpen(v => !v)}
-            className="btn-ghost !p-1.5 -mr-1 -mt-0.5"
+            className="btn-ghost w-11 h-11 -mr-1.5 -mt-1 flex items-center justify-center shrink-0"
             aria-label="Opções do desafio"
           >
             <MoreVertical size={16} />

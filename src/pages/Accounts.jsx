@@ -92,7 +92,17 @@ export default function Accounts() {
       )}
 
       {pendingDelete && (
-        <Modal title="Excluir conta" onClose={() => !deleteLoading && setPendingDelete(null)}>
+        <Modal
+          title="Excluir conta"
+          onClose={() => !deleteLoading && setPendingDelete(null)}
+          footer={
+            <div className="flex justify-end">
+              <button type="button" onClick={() => setPendingDelete(null)} disabled={deleteLoading} className="btn-ghost">
+                Cancelar
+              </button>
+            </div>
+          }
+        >
           <div className="space-y-4">
             <div className="flex gap-3 p-4 bg-amber-500/10 rounded-xl border border-amber-500/20">
               <AlertTriangle size={18} className="text-amber-400 shrink-0 mt-0.5" />
@@ -128,12 +138,6 @@ export default function Accounts() {
                 <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
                   Mantém o histórico — as transações passam a aparecer como órfãs no Extrato.
                 </p>
-              </button>
-            </div>
-
-            <div className="flex justify-end">
-              <button type="button" onClick={() => setPendingDelete(null)} disabled={deleteLoading} className="btn-ghost">
-                Cancelar
               </button>
             </div>
           </div>

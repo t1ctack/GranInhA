@@ -50,7 +50,7 @@ export default function TransactionItem({ tx, account, onDelete }) {
           <button
             onClick={() => onDelete(tx)}
             aria-label="Desfazer transação"
-            className="text-gray-300 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-500/10"
+            className="text-gray-300 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 transition-colors w-11 h-11 -mr-2 flex items-center justify-center rounded-lg hover:bg-red-500/10 shrink-0"
           >
             <Trash2 size={13} />
           </button>

@@ -431,7 +431,7 @@ export default function Chat() {
           <button
             onClick={() => handleSend()}
             disabled={!input.trim() || thinking || messages === null}
-            className="btn-primary flex items-center justify-center w-11 shrink-0"
+            className="btn-primary flex items-center justify-center w-11 h-11 shrink-0"
             aria-label="Enviar"
           >
             <Send size={16} />

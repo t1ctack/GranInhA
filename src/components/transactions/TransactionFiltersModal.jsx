@@ -35,7 +35,25 @@ export default function TransactionFiltersModal({
   onClose,
 }) {
   return (
-    <Modal title="Filtros" onClose={onClose}>
+    <Modal
+      title="Filtros"
+      onClose={onClose}
+      footer={
+        <div className="flex justify-between gap-2">
+          <button
+            type="button"
+            onClick={clearFilters}
+            disabled={activeCount === 0}
+            className="btn-ghost disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Limpar filtros
+          </button>
+          <button type="button" onClick={onClose} className="btn-primary">
+            Aplicar
+          </button>
+        </div>
+      }
+    >
       <div className="space-y-5">
         {/* Type */}
         <div>
@@ -141,21 +159,6 @@ export default function TransactionFiltersModal({
               </div>
             </div>
           )}
-        </div>
-
-        {/* Actions */}
-        <div className="flex justify-between gap-2 pt-1">
-          <button
-            type="button"
-            onClick={clearFilters}
-            disabled={activeCount === 0}
-            className="btn-ghost disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            Limpar filtros
-          </button>
-          <button type="button" onClick={onClose} className="btn-primary">
-            Aplicar
-          </button>
         </div>
       </div>
     </Modal>

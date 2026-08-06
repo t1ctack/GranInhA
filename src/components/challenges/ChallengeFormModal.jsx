@@ -87,8 +87,21 @@ export default function ChallengeFormModal({ accounts, onSave, onClose }) {
   }
 
   return (
-    <Modal title="Novo Desafio" onClose={onClose}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <Modal
+      title="Novo Desafio"
+      onClose={onClose}
+      footer={
+        <div className="flex justify-end gap-2">
+          <button type="button" onClick={onClose} className="btn-ghost">
+            Cancelar
+          </button>
+          <button type="submit" form="challenge-form" disabled={saving || accounts.length === 0} className="btn-primary">
+            {saving ? 'Criando…' : 'Criar desafio'}
+          </button>
+        </div>
+      }
+    >
+      <form id="challenge-form" onSubmit={handleSubmit} className="space-y-4">
         {/* Type */}
         <div>
           <label className="block text-sm text-slate-400 mb-1.5">Tipo de desafio</label>
@@ -242,16 +255,6 @@ export default function ChallengeFormModal({ accounts, onSave, onClose }) {
             </p>
           </div>
         )}
-
-        {/* Actions */}
-        <div className="flex justify-end gap-2 pt-1">
-          <button type="button" onClick={onClose} className="btn-ghost">
-            Cancelar
-          </button>
-          <button type="submit" disabled={saving || accounts.length === 0} className="btn-primary">
-            {saving ? 'Criando…' : 'Criar desafio'}
-          </button>
-        </div>
       </form>
     </Modal>
   )

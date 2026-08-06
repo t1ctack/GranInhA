@@ -84,8 +84,21 @@ export default function AccountFormModal({ initial, onSave, onClose }) {
   }
 
   return (
-    <Modal title={isEditing ? 'Editar Conta' : 'Nova Conta'} onClose={onClose}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <Modal
+      title={isEditing ? 'Editar Conta' : 'Nova Conta'}
+      onClose={onClose}
+      footer={
+        <div className="flex justify-end gap-2">
+          <button type="button" onClick={onClose} className="btn-ghost">
+            Cancelar
+          </button>
+          <button type="submit" form="account-form" disabled={saving} className="btn-primary">
+            {saving ? 'Salvando…' : isEditing ? 'Salvar alterações' : 'Criar conta'}
+          </button>
+        </div>
+      }
+    >
+      <form id="account-form" onSubmit={handleSubmit} className="space-y-4">
         {/* Name */}
         <div>
           <label className="block text-sm text-slate-400 mb-1.5">Nome da conta</label>
@@ -192,16 +205,6 @@ export default function AccountFormModal({ initial, onSave, onClose }) {
               />
             ))}
           </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex justify-end gap-2 pt-1">
-          <button type="button" onClick={onClose} className="btn-ghost">
-            Cancelar
-          </button>
-          <button type="submit" disabled={saving} className="btn-primary">
-            {saving ? 'Salvando…' : isEditing ? 'Salvar alterações' : 'Criar conta'}
-          </button>
         </div>
       </form>
     </Modal>

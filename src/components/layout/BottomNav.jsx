@@ -11,14 +11,17 @@ const navItems = [
 
 export default function BottomNav() {
   return (
-    <nav className="layout-nav md:hidden fixed bottom-0 inset-x-0 border-t flex z-50">
+    <nav
+      className="layout-nav md:hidden fixed bottom-0 inset-x-0 border-t flex z-50"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+    >
       {navItems.map(({ to, icon: Icon, label }) => (
         <NavLink
           key={to}
           to={to}
           end={to === '/'}
           className={({ isActive }) =>
-            `flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium transition-colors duration-150 ${
+            `flex-1 flex flex-col items-center justify-center gap-1 py-3 min-h-[44px] text-xs font-medium transition-colors duration-150 ${
               isActive
                 ? 'text-brand-600 dark:text-brand-400'
                 : 'text-gray-400 dark:text-slate-500'

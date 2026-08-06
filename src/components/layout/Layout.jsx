@@ -17,14 +17,14 @@ export default function Layout() {
           <img src={logoIcon} alt="GranInhA" className="h-6 w-auto" />
           <button
             onClick={toggleTheme}
-            className="p-1.5 rounded-lg text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-dm-muted transition-colors"
+            className="relative p-1.5 rounded-lg text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-dm-muted transition-colors before:absolute before:-inset-2 before:content-['']"
             aria-label="Alternar tema"
           >
             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
           </button>
         </header>
 
-        <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
+        <main className="flex-1 overflow-y-auto pb-[calc(5rem_+_env(safe-area-inset-bottom))] md:pb-0">
           <div className="max-w-4xl mx-auto px-4 py-6">
             <Outlet />
           </div>
