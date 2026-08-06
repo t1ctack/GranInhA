@@ -89,3 +89,9 @@ await cropLogo(
   join(ASSETS, 'logo-icon-cropped.png'),
   { displayWidth: 360, hiresDest: join(ASSETS, 'logo-icon-cropped-hires.png') },
 )
+
+await cropLogo(
+  join(ASSETS, 'logo-full-light.png'),
+  join(ASSETS, 'logo-full-light-cropped.png'),
+  { displayWidth: 720 },
+)

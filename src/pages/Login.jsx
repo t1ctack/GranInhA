@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTheme } from '@/contexts/ThemeContext'
 import logoFull from '@/assets/logo-full-cropped.png'
+import logoFullLight from '@/assets/logo-full-light-cropped.png'
 import logoIcon from '@/assets/logo-icon-cropped.png'
 
 export default function Login() {
   const { user, loading, signInWithGoogle } = useAuth()
+  const { theme } = useTheme()
   const navigate = useNavigate()
   const [error, setError] = useState(null)
   const [busy, setBusy]   = useState(false)
@@ -46,7 +49,7 @@ export default function Login() {
             alt="GranInhA"
             className="h-24 w-auto animate-float drop-shadow-[0_0_24px_rgba(74,222,128,0.35)]"
           />
-          <img src={logoFull} alt="GranInhA" className="h-10 w-auto" />
+          <img src={theme === 'light' ? logoFullLight : logoFull} alt="GranInhA" className="h-10 w-auto" />
           <p className="text-gray-500 dark:text-slate-400 text-sm text-center leading-relaxed">
             Controle financeiro pessoal com porquinhos,<br />cartões e carteiras
           </p>

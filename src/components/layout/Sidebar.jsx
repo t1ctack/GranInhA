@@ -3,6 +3,7 @@ import { PiggyBank, LayoutDashboard, ArrowLeftRight, MessageSquare, LogOut, Sun,
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import logoFull from '@/assets/logo-full-cropped.png'
+import logoFullLight from '@/assets/logo-full-light-cropped.png'
 
 const navItems = [
   { to: '/',             icon: LayoutDashboard, label: 'Início' },
@@ -18,7 +19,7 @@ export default function Sidebar() {
   return (
     <aside className="sidebar hidden md:flex flex-col w-60 border-r p-4 gap-2 shrink-0">
       <div className="py-3 mb-4 overflow-hidden">
-        <img src={logoFull} alt="GranInhA" className="h-16 w-auto block" />
+        <img src={theme === 'light' ? logoFullLight : logoFull} alt="GranInhA" className="h-16 w-auto block" />
       </div>
 
       <nav className="flex-1 space-y-1">
