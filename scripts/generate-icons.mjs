@@ -14,7 +14,7 @@ import { fileURLToPath } from 'url'
 
 const __dir  = dirname(fileURLToPath(import.meta.url))
 const root   = join(__dir, '..')
-const src    = join(root, 'src', 'assets', 'logo-icon-cropped.png')
+const src    = join(root, 'src', 'assets', 'logo-icon-cropped-hires.png')
 const pub    = join(root, 'public')
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

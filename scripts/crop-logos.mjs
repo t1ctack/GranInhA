@@ -40,7 +40,10 @@ async function findContentBounds(imgBuffer) {
   }
 }
 
-async function cropLogo(src, dest) {
+// Display width (px) for the optimized in-app asset. Chosen with ~3.5x
+// headroom over the largest on-screen usage so retina displays stay crisp
+// while keeping the shipped file tiny.
+async function cropLogo(src, dest, { displayWidth, hiresDest } = {}) {
   const buf = readFileSync(src)
   const b   = await findContentBounds(buf)
 
@@ -52,9 +55,24 @@ async function cropLogo(src, dest) {
   console.log(`  content  : ${b.contentW} × ${b.contentH}`)
   console.log(`  crop box : left=${b.left} top=${b.top} ${cropW}×${cropH}`)
 
-  await sharp(buf)
+  const cropped = await sharp(buf)
     .extract({ left: b.left, top: b.top, width: cropW, height: cropH })
     .png()
+    .toBuffer()
+
+  // Optional lossless full-resolution copy, kept only as a source for
+  // build-time tooling (e.g. favicon/PWA icon generation) — never imported
+  // by app code, so it costs nothing in the shipped bundle.
+  if (hiresDest) {
+    await sharp(cropped).png({ compressionLevel: 9 }).toFile(hiresDest)
+    console.log(`  → hires  : ${hiresDest.split(/[\\/]/).pop()}`)
+  }
+
+  // Optimized small version actually imported by the app UI: resized to
+  // real display size + palette-quantized PNG for a drastically smaller file.
+  await sharp(cropped)
+    .resize({ width: displayWidth })
+    .png({ compressionLevel: 9, palette: true, quality: 90 })
     .toFile(dest)
 
   console.log(`  → saved  : ${dest.split(/[\\/]/).pop()}\n`)
@@ -63,9 +81,11 @@ async function cropLogo(src, dest) {
 await cropLogo(
   join(ASSETS, 'logo-full.png'),
   join(ASSETS, 'logo-full-cropped.png'),
+  { displayWidth: 720 },
 )
 
 await cropLogo(
   join(ASSETS, 'logo-icon.png'),
   join(ASSETS, 'logo-icon-cropped.png'),
+  { displayWidth: 360, hiresDest: join(ASSETS, 'logo-icon-cropped-hires.png') },
 )
