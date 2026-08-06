@@ -70,6 +70,12 @@ export function toDatetimeLocal(date = new Date()) {
   return `${date.getFullYear()}-${p(date.getMonth()+1)}-${p(date.getDate())}T${p(date.getHours())}:${p(date.getMinutes())}`
 }
 
+/** "YYYY-MM-DD" — correct value for date inputs */
+export function todayDateStr(date = new Date()) {
+  const p = n => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${p(date.getMonth()+1)}-${p(date.getDate())}`
+}
+
 /** Parses BRL-style strings: "1.234,56" → 1234.56 */
 export function parseBRL(raw) {
   return Number(String(raw).replace(/\./g, '').replace(',', '.'))

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { PiggyBank, LayoutDashboard, ArrowLeftRight, MessageSquare, LogOut, Sun, Moon } from 'lucide-react'
+import { PiggyBank, LayoutDashboard, ArrowLeftRight, MessageSquare, LogOut, Sun, Moon, Trophy } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import logoFull from '@/assets/logo-full-cropped.png'
@@ -9,6 +9,7 @@ const navItems = [
   { to: '/',             icon: LayoutDashboard, label: 'Início' },
   { to: '/accounts',    icon: PiggyBank,        label: 'Contas' },
   { to: '/transactions', icon: ArrowLeftRight,  label: 'Extrato' },
+  { to: '/challenges',   icon: Trophy,          label: 'Desafios' },
   { to: '/chat',        icon: MessageSquare,    label: 'Chat' },
 ]
 

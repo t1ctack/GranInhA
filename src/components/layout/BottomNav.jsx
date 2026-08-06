@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom'
-import { PiggyBank, LayoutDashboard, ArrowLeftRight, MessageSquare } from 'lucide-react'
+import { PiggyBank, LayoutDashboard, ArrowLeftRight, MessageSquare, Trophy } from 'lucide-react'
 
 const navItems = [
   { to: '/',             icon: LayoutDashboard, label: 'Início' },
   { to: '/accounts',    icon: PiggyBank,        label: 'Contas' },
   { to: '/transactions', icon: ArrowLeftRight,  label: 'Extrato' },
+  { to: '/challenges',   icon: Trophy,          label: 'Desafios' },
   { to: '/chat',        icon: MessageSquare,    label: 'Chat' },
 ]
 

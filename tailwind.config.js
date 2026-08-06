@@ -33,6 +33,7 @@ export default {
         'slide-up': 'slideUp 0.3s ease-out',
         'fade-in':  'fadeIn 0.2s ease-out',
         'float':    'float 3s ease-in-out infinite',
+        'confetti': 'confettiFall 2.4s ease-in forwards',
       },
       keyframes: {
         slideUp: {
@@ -46,6 +47,10 @@ export default {
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%':      { transform: 'translateY(-6px)' },
+        },
+        confettiFall: {
+          '0%':   { transform: 'translateY(-16px) rotate(0deg)',   opacity: '1' },
+          '100%': { transform: 'translateY(260px) rotate(360deg)', opacity: '0' },
         },
       },
     },

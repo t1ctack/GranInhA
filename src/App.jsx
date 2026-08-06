@@ -7,6 +7,8 @@ import Login from '@/pages/Login'
 import Dashboard from '@/pages/Dashboard'
 import Accounts from '@/pages/Accounts'
 import Goals from '@/pages/Goals'
+import Challenges from '@/pages/Challenges'
+import ChallengeDetail from '@/pages/ChallengeDetail'
 import Transactions from '@/pages/Transactions'
 import Chat from '@/pages/Chat'
 import NotFound from '@/pages/NotFound'
@@ -30,6 +32,8 @@ export default function App() {
               <Route index element={<Dashboard />} />
               <Route path="accounts" element={<Accounts />} />
               <Route path="goals" element={<Goals />} />
+              <Route path="challenges" element={<Challenges />} />
+              <Route path="challenges/:id" element={<ChallengeDetail />} />
               <Route path="transactions" element={<Transactions />} />
               <Route path="chat" element={<Chat />} />
               <Route path="404" element={<NotFound />} />
