@@ -29,12 +29,13 @@ export default function AccountFormModal({ initial, onSave, onClose }) {
   const isEditing = Boolean(initial)
 
   const [form, setForm] = useState({
-    name:    initial?.name  ?? '',
-    type:    initial?.type  ?? 'piggy',
-    color:   initial?.color ?? '#22c55e',
-    balance: '',             // only shown on create
+    name:       initial?.name  ?? '',
+    type:       initial?.type  ?? 'piggy',
+    color:      initial?.color ?? '#22c55e',
+    balance:    '',             // only shown on create
+    goalAmount: initial?.goalAmount != null ? String(initial.goalAmount).replace('.', ',') : '',
+    goalDate:   initial?.goalDate ?? '',
   })
-  const [errors, setSaving_] = useState({})  // reused for errors + saving below
   const [errs, setErrs]     = useState({})
   const [saving, setSaving]  = useState(false)
 
@@ -53,6 +54,10 @@ export default function AccountFormModal({ initial, onSave, onClose }) {
         e.balance = 'Valor inválido'
       }
     }
+    if (form.goalAmount.trim() !== '') {
+      const goal = parseBalance(form.goalAmount)
+      if (isNaN(goal) || goal <= 0) e.goalAmount = 'Valor inválido'
+    }
     return e
   }
 
@@ -64,9 +69,11 @@ export default function AccountFormModal({ initial, onSave, onClose }) {
     setSaving(true)
     try {
       const data = {
-        name:  form.name.trim(),
-        type:  form.type,
-        color: form.color,
+        name:       form.name.trim(),
+        type:       form.type,
+        color:      form.color,
+        goalAmount: form.goalAmount.trim() !== '' ? parseBalance(form.goalAmount) : null,
+        goalDate:   form.goalDate || null,
       }
       if (!isEditing) data.balance = parseBalance(form.balance)
       await onSave(data)
@@ -127,6 +134,40 @@ export default function AccountFormModal({ initial, onSave, onClose }) {
             </div>
             {errs.balance && <p className="text-red-400 text-xs mt-1">{errs.balance}</p>}
             <p className="text-slate-500 text-xs mt-1">O saldo só pode ser alterado através de transações após a criação.</p>
+          </div>
+        )}
+
+        {/* Goal */}
+        <div>
+          <label className="block text-sm text-slate-400 mb-1.5">
+            Meta de economia <span className="text-slate-600">(opcional)</span>
+          </label>
+          <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none">
+              R$
+            </span>
+            <input
+              className={`input pl-9 ${errs.goalAmount ? 'ring-2 ring-red-500 border-transparent' : ''}`}
+              placeholder="0,00"
+              value={form.goalAmount}
+              onChange={e => field('goalAmount', e.target.value)}
+              inputMode="decimal"
+            />
+          </div>
+          {errs.goalAmount && <p className="text-red-400 text-xs mt-1">{errs.goalAmount}</p>}
+        </div>
+
+        {form.goalAmount.trim() !== '' && (
+          <div>
+            <label className="block text-sm text-slate-400 mb-1.5">
+              Data alvo <span className="text-slate-600">(opcional)</span>
+            </label>
+            <input
+              type="date"
+              className="input"
+              value={form.goalDate}
+              onChange={e => field('goalDate', e.target.value)}
+            />
           </div>
         )}
 

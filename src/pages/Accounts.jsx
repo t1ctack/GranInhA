@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Plus, AlertTriangle } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Plus, AlertTriangle, Target } from 'lucide-react'
 import { useAccounts } from '@/hooks/useAccounts'
 import AccountCard from '@/components/accounts/AccountCard'
 import AccountFormModal from '@/components/accounts/AccountFormModal'
@@ -49,11 +50,17 @@ export default function Accounts() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Contas</h1>
           <p className="text-gray-500 dark:text-slate-400 text-sm mt-1">Porquinhos, cartões e carteiras</p>
         </div>
-        <button onClick={openCreate} className="btn-primary flex items-center gap-2">
-          <Plus size={16} />
-          <span className="hidden sm:inline">Nova Conta</span>
-          <span className="sm:hidden">Nova</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <Link to="/goals" className="btn-ghost flex items-center gap-2">
+            <Target size={16} />
+            <span className="hidden sm:inline">Metas</span>
+          </Link>
+          <button onClick={openCreate} className="btn-primary flex items-center gap-2">
+            <Plus size={16} />
+            <span className="hidden sm:inline">Nova Conta</span>
+            <span className="sm:hidden">Nova</span>
+          </button>
+        </div>
       </div>
 
       {/* Content */}

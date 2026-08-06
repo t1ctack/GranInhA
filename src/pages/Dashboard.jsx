@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TrendingUp, TrendingDown, Wallet, Plus, ArrowRight } from 'lucide-react'
+import { TrendingUp, TrendingDown, Wallet, Plus, ArrowRight, PartyPopper } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useAccounts } from '@/hooks/useAccounts'
 import { useTransactions } from '@/hooks/useTransactions'
@@ -9,8 +9,11 @@ import TransactionItem from '@/components/transactions/TransactionItem'
 import BalanceEvolutionChart from '@/components/dashboard/BalanceEvolutionChart'
 import ExpensesByAccountChart from '@/components/dashboard/ExpensesByAccountChart'
 import { formatCurrency } from '@/services/formatters'
+import { goalProgress } from '@/services/goals'
 import { TYPE_META } from '@/components/accounts/AccountCard'
 import logoIcon from '@/assets/logo-icon-cropped.png'
+
+const GOAL_HIGHLIGHT_THRESHOLD = 0.9
 
 function SkeletonCard() {
   return <div className="card h-20 animate-pulse bg-gray-100 dark:bg-dm-muted/60 !p-0" />
@@ -27,6 +30,12 @@ export default function Dashboard() {
   const recentTxs  = transactions.slice(0, 5)
   const firstName  = user?.displayName?.split(' ')[0] ?? 'você'
 
+  const goalHighlights = accounts
+    .filter(a => a.goalAmount != null && a.goalAmount > 0)
+    .map(a => ({ ...a, _progress: goalProgress(a.balance ?? 0, a.goalAmount) }))
+    .filter(a => a._progress.pct >= GOAL_HIGHLIGHT_THRESHOLD)
+    .sort((a, b) => b._progress.pct - a._progress.pct)
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Greeting */}
@@ -41,6 +50,32 @@ export default function Dashboard() {
           <span className="sm:hidden">Nova</span>
         </button>
       </div>
+
+      {/* Goal highlights */}
+      {!loadingAccounts && goalHighlights.length > 0 && (
+        <div className="flex items-center justify-between gap-3 p-4 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+          <div className="flex items-center gap-3 min-w-0">
+            <PartyPopper size={18} className="text-emerald-500 shrink-0" />
+            <p className="text-sm text-gray-700 dark:text-slate-300">
+              {goalHighlights.length === 1 ? (
+                <>
+                  Sua meta <strong>{goalHighlights[0].name}</strong> {goalHighlights[0]._progress.reached
+                    ? 'foi atingida'
+                    : `está ${Math.round(goalHighlights[0]._progress.pct * 100)}% completa`}! 🎉
+                </>
+              ) : (
+                `${goalHighlights.length} metas estão perto de serem atingidas!`
+              )}
+            </p>
+          </div>
+          <Link
+            to="/goals"
+            className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline shrink-0 whitespace-nowrap"
+          >
+            Ver metas
+          </Link>
+        </div>
+      )}
 
       {/* Summary cards */}
       {loadingAccounts || loadingTxs ? (

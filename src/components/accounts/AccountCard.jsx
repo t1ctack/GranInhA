@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { MoreVertical, Pencil, Trash2 } from 'lucide-react'
+import GoalProgress from './GoalProgress'
 
 export const TYPE_META = {
   piggy:       { label: 'Porquinho',         emoji: '🐷' },
@@ -85,6 +86,8 @@ export default function AccountCard({ account, onEdit, onDelete }) {
           {fmt.format(balance)}
         </p>
       </div>
+
+      <GoalProgress balance={balance} goalAmount={account.goalAmount} goalDate={account.goalDate} color={color} />
     </div>
   )
 }

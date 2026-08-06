@@ -6,6 +6,7 @@ import Layout from '@/components/layout/Layout'
 import Login from '@/pages/Login'
 import Dashboard from '@/pages/Dashboard'
 import Accounts from '@/pages/Accounts'
+import Goals from '@/pages/Goals'
 import Transactions from '@/pages/Transactions'
 import Chat from '@/pages/Chat'
 import NotFound from '@/pages/NotFound'
@@ -28,6 +29,7 @@ export default function App() {
             >
               <Route index element={<Dashboard />} />
               <Route path="accounts" element={<Accounts />} />
+              <Route path="goals" element={<Goals />} />
               <Route path="transactions" element={<Transactions />} />
               <Route path="chat" element={<Chat />} />
               <Route path="404" element={<NotFound />} />

@@ -60,8 +60,8 @@ export function useAccounts() {
     })
   }
 
-  async function updateAccount(id, { name, type, color }) {
-    await updateDoc(doc(db, 'users', user.uid, 'accounts', id), { name, type, color })
+  async function updateAccount(id, { name, type, color, goalAmount = null, goalDate = null }) {
+    await updateDoc(doc(db, 'users', user.uid, 'accounts', id), { name, type, color, goalAmount, goalDate })
   }
 
   /** Deletes the account. When `withTransactions` is true, also deletes every
