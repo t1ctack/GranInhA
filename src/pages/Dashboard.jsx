@@ -110,7 +110,7 @@ export default function Dashboard() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <BalanceEvolutionChart transactions={transactions} loading={loadingTxs} />
+        <BalanceEvolutionChart transactions={transactions} totalBalance={totalBalance} loading={loadingTxs} />
         <ExpensesByAccountChart transactions={transactions} accounts={accounts} loading={loadingTxs || loadingAccounts} />
       </div>
 

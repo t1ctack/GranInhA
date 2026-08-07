@@ -16,8 +16,14 @@ function startOfDay(d) {
   return c
 }
 
-/** Builds a day-by-day cumulative balance series from raw transaction deltas. */
-function buildBalanceSeries(transactions) {
+/**
+ * Builds a day-by-day cumulative balance series from raw transaction deltas.
+ * Anchored on `totalBalance` (accounts' current sum) so the series reflects each
+ * account's initial balance too — not just deltas from zero, which is what an
+ * account's opening balance (set at creation, never itself a transaction) would
+ * otherwise be missing from the baseline.
+ */
+function buildBalanceSeries(transactions, totalBalance) {
   const withDates = transactions
     .map(tx => ({ ...tx, _date: toDate(tx.date) }))
     .filter(tx => tx._date && !isNaN(tx._date))
@@ -25,11 +31,16 @@ function buildBalanceSeries(transactions) {
   if (withDates.length === 0) return []
 
   const dailyDelta = new Map()
+  let totalDelta = 0
   for (const tx of withDates) {
     const key = dateKey(startOfDay(tx._date))
     const delta = tx.type === 'income' ? tx.amount : -tx.amount
     dailyDelta.set(key, (dailyDelta.get(key) ?? 0) + delta)
+    totalDelta += delta
   }
+
+  // Sum of every account's opening balance, recovered as current total minus all known deltas.
+  const openingBalance = (totalBalance ?? totalDelta) - totalDelta
 
   const today = startOfDay(new Date())
   const earliestWanted = new Date(today)
@@ -38,8 +49,8 @@ function buildBalanceSeries(transactions) {
   const firstTxDay = startOfDay(withDates.reduce((min, tx) => (tx._date < min ? tx._date : min), withDates[0]._date))
   const rangeStart = firstTxDay > earliestWanted ? firstTxDay : earliestWanted
 
-  // Baseline: sum of every delta that happened strictly before the visible range.
-  let running = 0
+  // Baseline: opening balance plus every delta that happened strictly before the visible range.
+  let running = openingBalance
   for (const [key, delta] of dailyDelta) {
     const [y, m, d] = key.split('-').map(Number)
     if (new Date(y, m - 1, d) < rangeStart) running += delta
@@ -70,11 +81,11 @@ function CustomTooltip({ active, payload, label }) {
   )
 }
 
-export default function BalanceEvolutionChart({ transactions, loading }) {
+export default function BalanceEvolutionChart({ transactions, totalBalance, loading }) {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
 
-  const series = useMemo(() => buildBalanceSeries(transactions), [transactions])
+  const series = useMemo(() => buildBalanceSeries(transactions, totalBalance), [transactions, totalBalance])
 
   const gridColor = isDark ? '#262626' : '#e5e7eb'
   const tickColor = isDark ? '#64748b' : '#9ca3af'

@@ -10,6 +10,8 @@ import { auth } from '@/services/firebase'
 const AuthContext = createContext(null)
 
 const googleProvider = new GoogleAuthProvider()
+// Always show the account picker instead of silently reusing the last Google session.
+googleProvider.setCustomParameters({ prompt: 'select_account' })
 
 export function AuthProvider({ children }) {
   const [user, setUser]       = useState(null)
@@ -31,8 +33,14 @@ export function AuthProvider({ children }) {
     await firebaseSignOut(auth)
   }
 
+  /** Signs the current user out and immediately reopens the Google account picker. */
+  async function switchAccount() {
+    await firebaseSignOut(auth)
+    await signInWithPopup(auth, googleProvider)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut, switchAccount }}>
       {children}
     </AuthContext.Provider>
   )
