@@ -26,6 +26,7 @@ export default function TransactionFormModal({ accounts, onSave, onClose }) {
     if (!form.accountId) e.accountId = 'Selecione uma conta'
     const parsed = parseBRL(form.amount)
     if (!form.amount || isNaN(parsed) || parsed <= 0) e.amount = 'Informe um valor maior que zero'
+    if (form.date && new Date(form.date) > new Date()) e.date = 'A data não pode ser no futuro'
     return e
   }
 
@@ -195,10 +196,12 @@ export default function TransactionFormModal({ accounts, onSave, onClose }) {
           <label className="block text-sm text-slate-400 mb-1.5">Data e hora</label>
           <input
             type="datetime-local"
-            className="input"
+            className={`input ${errs.date ? 'ring-2 ring-red-500 border-transparent' : ''}`}
             value={form.date}
+            max={toDatetimeLocal()}
             onChange={e => field('date', e.target.value)}
           />
+          {errs.date && <p className="text-red-400 text-xs mt-1">{errs.date}</p>}
         </div>
 
       </form>
